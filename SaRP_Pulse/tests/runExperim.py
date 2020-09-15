@@ -59,5 +59,5 @@ def clearResultFiles():
 
 if __name__ == '__main__':
 	city='Chicago-Sketch'
-	
-	runInstances(3,5,0.8)
+	print(os.name)
+	#runInstances(3,5,0.8)
