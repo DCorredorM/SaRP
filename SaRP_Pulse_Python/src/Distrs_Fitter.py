@@ -255,7 +255,10 @@ def fitPH(nScen,nPhases,net='Chicago-Sketch'):
 	files=[open(f'../../data/Networks/{net}/Scenarios/scen{k+1}.txt','r') for k in range(nScen)]+[open(f'../../data/Networks/{net}/Scenarios/scenTotal.txt','r')]	
 	filesOut=[open(f'../../data/Networks/{net}/Scenarios/PHFit{nPhases}_scen{k+1}.txt','w') for k in range(nScen)]+[open(f'../../data/Networks/{net}/Scenarios/PHFit{nPhases}_scenTotal.txt','w')]	
 	arcs=loadNet(net=net)
+	N=len(arcs.keys())
+	n=0
 	for i,j in arcs.keys():
+		n+=1
 		for fin,fout in zip(files,filesOut):
 			l=fin.readline()			
 			ii,jj,data=l.replace('\n','').split('\t')
@@ -263,7 +266,7 @@ def fitPH(nScen,nPhases,net='Chicago-Sketch'):
 			
 			ph,loglike=get_PH_HE(data,nPhases)			
 			fout.write(f'{i}\t{j}\t{arcs[i,j][0]}\t{arcs[i,j][2]}\t{[list(map(lambda x: round(float(x),10),k))[0]for k in ph.alpha.tolist()]}\t{[list(map(lambda x: round(float(x),10),k))for k in ph.T.tolist()]}\n')
-		print(i,j)
+		print(n/N)
 	for fin,fout in zip(files,filesOut): (fin.close(),fout.close())
 
 
