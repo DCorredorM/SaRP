@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type = "text/xsl" href = "http://www.coin-or.org/projects/autoGen.xsl"?>
+<projectData xmlns="coin-or.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="coin-or.org http://www.coin-or.org/projects/autoGen.xsd">
+  <projectBasics>
+    <projectName>jMarkov</projectName>
+    <projectDescription> 
+  jMarkov is an open-source tool for Markov chain modeling. 
+  jMarkov includes support for finite Markov chain, 
+  quasi-birth-and-death processes, 
+  phase-type distributions, 
+  and Markov decision processes. 
+    </projectDescription>
+    <projectShortDescription>An open-source tool for Markov chain modeling, including finite Markov chains, quasi-birth-and-death processes, phase-type distributions, and Markov decision processes.</projectShortDescription>
+    <projectManager>Juan F. Perez</projectManager>
+    <projectHomePage>https://github.com/coin-or/jMarkov</projectHomePage>
+    <projectLicense>Eclipse Public License 1.0</projectLicense>
+    <projectLicenseURL>http://www.eclipse.org/legal/epl-v10.html</projectLicenseURL>
+    <coinLinkedProjects/>
+    <otherLinkedPackages>
+      <otherPackage>
+        <packageName/>
+        <packageURL/>
+        <requiredOrOptional/>
+      </otherPackage>
+    </otherLinkedPackages>
+    <projectLanguage>Java</projectLanguage>
+    <developmentStatus>
+      <activityStatus>Active</activityStatus>
+      <maturityLevel>4</maturityLevel>
+    </developmentStatus>
+    <testedPlatforms>
+      <platform>
+        <operatingSystem>Microsoft Windows</operatingSystem>
+        <compiler>javac</compiler>
+      </platform>
+    </testedPlatforms>
+    <projectCategories>
+      <category>Stochastic Modeling</category>
+    </projectCategories>
+  </projectBasics>
+  <leftMenuLinks>
+    <documentation>https://coin-or.github.io/jMarkov/index.html</documentation>
+    <sourceCodeDownload>https://github.com/coin-or/jMarkov</sourceCodeDownload>
+    <binaryDownload/>
+    <mailingList>http://list.coin-or.org/mailman/listinfo/jmarkov</mailingList>
+  </leftMenuLinks>
+</projectData>
