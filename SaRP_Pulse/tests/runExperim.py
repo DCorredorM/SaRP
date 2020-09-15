@@ -42,7 +42,7 @@ def runInstances(nPhases,nScen,alpha,clearF=True):
 			config.close()
 			runExperiment()
 		nn+=1
-		if nn>=1:
+		if nn>=1000:
 			break
 
 def clearResultFiles():
@@ -50,7 +50,11 @@ def clearResultFiles():
 	clears all result files from city path
 	'''
 	folder=os.path.abspath(f'../../data/Networks/{city}/Results/Scenarios/*')
-	os.popen(f'rm {folder}')
+	if os.name=='posix':
+		os.popen(f'rm {folder}')
+	else:
+		os.popen(f'del {folder}')
+
 
 
 
@@ -59,5 +63,5 @@ def clearResultFiles():
 
 if __name__ == '__main__':
 	city='Chicago-Sketch'
-	
+	#print(os.name)
 	runInstances(3,5,0.8)
