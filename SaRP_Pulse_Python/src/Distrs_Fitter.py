@@ -263,7 +263,7 @@ def fitPH(nScen,nPhases,net='Chicago-Sketch'):
 			
 			ph,loglike=get_PH_HE(data,nPhases)			
 			fout.write(f'{i};{j};{arcs[i,j][0]};{arcs[i,j][2]};{[list(map(lambda x: round(float(x),10),k))[0]for k in ph.alpha.tolist()]};{[list(map(lambda x: round(float(x),10),k))for k in ph.T.tolist()]}\n')
-		
+		print(i,j)
 
 
 
