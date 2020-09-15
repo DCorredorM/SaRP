@@ -21,11 +21,171 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import jphase.ContPhaseVar;
 import jphase.DenseContPhaseVar;
 
 public class PulseMain {
+
+	
+	public static void main(String[] args) throws IOException, InterruptedException {
+		//String Mfile="/Users/davidcorredor/Documents/PulseAlgorithm/SaRP/data/Networks";
+		
+//		Path currentDir = Paths.get(".");
+//		System.out.println(currentDir.toAbsolutePath());
+//		Path parentDir = Paths.get("..");
+		
+		String city="Chicago-Sketch";
+		String city_file=Paths.get(Paths.get("..").toAbsolutePath()+"/data/Networks"+"/"+city).normalize().toString();
+		
+		String[] arg= {city_file,city};		
+		runPulse(arg);
+		
+	}
+	
+	/**
+	 * This method runs the pulse
+	 * @param args
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public static void runPulse(String[] args) throws IOException, InterruptedException {
+		
+		String city_file=args[0];
+		String city=args[1];
+		
+		File config_File = new File(city_file+"/"+city+"_config.txt");
+		BufferedReader bufRedr = new BufferedReader(new FileReader(config_File));
+				
+		//Reads the file
+		String actLine = null;
+		String [] information = new String [7];
+		int rowA = 0;
+		int colA = 0;
+
+		while((actLine = bufRedr.readLine()) != null && rowA < 7){	
+			String [] info1 = actLine.split(":");
+			information[rowA] = info1[1];
+			//System.out.println(rowA+" "+info1[0]+" "+info1[1]);
+			rowA++;
+		}
+		double T_max=Double.parseDouble(information[3]);
+		int source =Integer.parseInt(information[4]);
+		int target =Integer.parseInt(information[5]);
+		int num_nodes=Integer.parseInt(information[2]);
+		int num_arcs=Integer.parseInt(information[1]);
+		int N_Phases=Integer.parseInt(information[6]);
+
+
+
+		String net_file = city_file +"/"+information[0];
+		//Choose pulse direction: 1: Forward -  2: Backward
+
+		int direction = 1;
+
+		//Initialize the graph
+
+		PulseGraph network = null;
+
+		Fitter dataA = null;
+		//Forward direction: 
+		if(direction == 1) {
+			dataA = new Fitter(num_nodes,num_arcs,source,target,0,net_file,N_Phases);
+			dataA.ReadDimacsF();
+			network = S_createGraph(dataA);
+
+		}
+		//Backward direction: 
+		if(direction == 2) {
+			dataA = new Fitter(num_nodes,num_arcs,source,target,0,net_file,N_Phases );
+			dataA.ReadDimacsF();
+			network = S_createGraph(dataA);
+		}
+
+		//Initial bounds
+
+		SP(dataA,network);
+
+		//Time limit tightness
+
+
+		network.SetConstraint(T_max);
+		network.Setaplpha(0.9);
+
+
+		//Pulse algorithm parameters:
+
+		//First primal bound
+
+		//int MD=network.getVertexByID(dataA.Source-1).getMaxDist();
+		int MD = 9999999;
+		double prob=0;
+		network.setPrimalBound(MD);
+		network.setFinalProb(0.0);
+		//network.TimeStar = network.getVertexByID(dataA.Source-1).getMinTime();
+
+		//Size of Q
+
+		dataA.numLabels = 10;
+
+		//Initial weights
+
+		int[] initialWeights = new int[2];
+		initialWeights[0] = 0;
+		initialWeights[1] = 0;
+
+		//Initial path
+
+		ArrayList<Integer> finalPath = new ArrayList();
+		//Run the pulse and recover the path:
+
+		//Starts the clock
+
+		double iniTime = System.nanoTime(); 
+		network.pulse_time= System.nanoTime(); 
+		double [ ] [ ] A = new double[][] {{0}};
+		double [ ]  tau = new double[] {0};
+		ContPhaseVar ptRV=new DenseContPhaseVar(tau, A);
+		network.getVertexByID(dataA.Source).pulse(0, ptRV, 1, 0,0, finalPath);
+
+		/*
+		try {
+			network.getVertexByID(dataA.Source).pulse(0, ptRV, 1, 0,0, finalPath);
+		}
+		catch (Exception e) {
+			System.out.println(e);
+		}
+		 */
+		//finalPath = completeThePath(dataA,network);
+		finalPath = network.Path;
+
+		//Ends the clock
+
+		double finalTime = (System.nanoTime() - iniTime)/1000000000;
+
+
+		//Print results
+
+		String text =source+"\t"+target+"\t"+ finalTime+"\t"+network.PrimalBound+"\t"+network.minTime+"\t"+ network.finalProb+"\t"+network.Bound+"\t"+network.Infeasibility+"\t"+network.Dominance+"\t"+finalPath;
+		System.out.println(text);
+		String results_path=city_file+"/Results/"+information[0];
+
+
+		try(FileWriter fw = new FileWriter(results_path, true);
+				BufferedWriter bw = new BufferedWriter(fw);
+				PrintWriter out = new PrintWriter(bw))
+		{
+			out.println(text);
+			//more code
+
+		} catch (IOException e) {
+			//exception handling left as an exercise for the reader
+		}
+
+	}
+
 
 	/**
 	 * This method runs the pulse
@@ -33,16 +193,16 @@ public class PulseMain {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public static void main(String[] args) throws IOException, InterruptedException {
+	public static void main1(String[] args) throws IOException, InterruptedException {
 
 		//The main file of the networks
 		//String Mfile= "C:/Users/d.corredor/OneDrive - Universidad de los andes/Thesis/3. Case_study/Chicago/Networks";
 		//String Mfile= "C:/Users/d.corredor/OneDrive - Universidad de los andes/Thesis/3. Case_study/Transportation_networks/Networks";
 		String Mfile="/Users/davidcorredor/Documents/PulseAlgorithm/SaRP/data/Networks";
-		
+
 		//Networks to run.
 		String [] cities=new String[] {"Chicago-Sketch"};//"SiouxFalls","Chicago-Sketch","GoldCoast","Philadelphia","Sydney"
-		
+
 		//Number of instances to run:
 		int[] instances_run =new int[] {1,2,3,4,5,6,7};//,5,6,12,13,14,16,19};
 		//Creates the networks and runs the insatnces for every city
@@ -65,7 +225,7 @@ public class PulseMain {
 			int target;
 			double T_max;
 			int N_Phases;
-			
+
 			while((actLine1 = bufRedrr.readLine()) != null && row1 < 42 ){	
 				//in(row1,instances_run)
 				if (row1>-1 && in(row1,instances_run) ) {
@@ -95,7 +255,7 @@ public class PulseMain {
 					int num_nodes=Integer.parseInt(information[2]);
 					int num_arcs=Integer.parseInt(information[1]);
 					N_Phases=Integer.parseInt(information[6]);
-					
+
 
 
 					String net_file = city_file +"/"+information[0];
@@ -167,7 +327,7 @@ public class PulseMain {
 					double [ ]  tau = new double[] {0};
 					ContPhaseVar ptRV=new DenseContPhaseVar(tau, A);
 					network.getVertexByID(dataA.Source).pulse(0, ptRV, 1, 0,0, finalPath);
-					
+
 					/*
 					try {
 						network.getVertexByID(dataA.Source).pulse(0, ptRV, 1, 0,0, finalPath);
@@ -175,7 +335,7 @@ public class PulseMain {
 					catch (Exception e) {
 						System.out.println(e);
 					}
-					*/
+					 */
 					//finalPath = completeThePath(dataA,network);
 					finalPath = network.Path;
 
@@ -189,8 +349,8 @@ public class PulseMain {
 					String text =source+"\t"+target+"\t"+ finalTime+"\t"+network.PrimalBound+"\t"+network.minTime+"\t"+ network.finalProb+"\t"+network.Bound+"\t"+network.Infeasibility+"\t"+network.Dominance+"\t"+finalPath;
 					System.out.println(text);
 					String results_path=city_file+"/Results/"+information[0];
-					
-					
+
+
 					try(FileWriter fw = new FileWriter(results_path, true);
 							BufferedWriter bw = new BufferedWriter(fw);
 							PrintWriter out = new PrintWriter(bw))
@@ -390,7 +550,7 @@ public class PulseMain {
 		PulseGraph Gd = new PulseGraph(numNodes);
 		for (int i = 0; i < numNodes; i++) {
 			if(i!=(data.LastNode)){
-				
+
 				Gd.addVertex(new VertexPulse(i) ); //Primero lo creo, y luego lo meto. El id corresponde al n�mero del nodo
 			}
 		}
@@ -400,7 +560,7 @@ public class PulseMain {
 
 
 		for(int i = 0; i <data.NumArcs; i ++){
-			
+
 			Gd.addWeightedEdge( Gd.getVertexByID(data.Arcs[i][0]), Gd.getVertexByID(data.Arcs[i][1]),data.Distance[i],data.MinTime[i],data.TimeRV[i], i);
 		}
 		return Gd;
@@ -526,16 +686,16 @@ public class PulseMain {
 	}
 	public static boolean in(int i, int[] list) {
 		boolean is =false;
-		
+
 		for (int j = 0; j < list.length; j++) {
 			if (i==list[j]) {
 				is=true;
 				break;
 			}
 		}
-		
+
 		return is;
-		
+
 	}
 
 

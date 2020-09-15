@@ -1,7 +1,7 @@
-DataFile:Chicago-Sketch_PHfit_3.txt
+DataFile:Scenarios/PHFit3_scen1.txt
 Number of Arcs:2950
 Number of Nodes:933
-Time Constraint: 1000
-Start Node:1
-End Node:1
+Time Constraint:2307.7565944069133
+Start Node:761
+End Node:376
 Number of Phases:3

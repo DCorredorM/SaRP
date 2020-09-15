@@ -204,7 +204,7 @@ def createSceanrios(nScen,n,net='Chicago-Sketch'):
 		None: creates for each scenario a file with the data, and a file for the aggregated data. These files are saved in '../../data/Networks/{net}/Scenarios/'.
 
 	'''
-	files=[open(f'../../data/Networks/{net}/Scenarios/scen{k+1}_.txt','w') for k in range(nScen)]+[open(f'../../data/Networks/{net}/Scenarios/scenTotal.txt','w')]
+	files=[open(f'../../data/Networks/{net}/Scenarios/scen{k+1}.txt','w') for k in range(nScen)]+[open(f'../../data/Networks/{net}/Scenarios/scenTotal.txt','w')]
 	arcs=loadNet(net=net)
 	for i,j in arcs.keys():
 		c,t,fft,sigma=arcs[i,j]
@@ -252,8 +252,8 @@ def fitPH(nScen,nPhases,net='Chicago-Sketch'):
 		None: creates for each scenario a file with the data, and a file for the aggregated data. These files are saved in '../../data/Networks/{net}/Scenarios/'. 
 	'''
 
-	files=[open(f'../../data/Networks/{net}/Scenarios/scen{k+1}_.txt','r') for k in range(nScen)]+[open(f'../../data/Networks/{net}/Scenarios/scenTotal.txt','r')]	
-	filesOut=[open(f'../../data/Networks/{net}/Scenarios/PHFit{nPhases}_scen{k+1}_.txt','w') for k in range(nScen)]+[open(f'../../data/Networks/{net}/Scenarios/PHFit{nPhases}_scenTotal.txt','w')]	
+	files=[open(f'../../data/Networks/{net}/Scenarios/scen{k+1}.txt','r') for k in range(nScen)]+[open(f'../../data/Networks/{net}/Scenarios/scenTotal.txt','r')]	
+	filesOut=[open(f'../../data/Networks/{net}/Scenarios/PHFit{nPhases}_scen{k+1}.txt','w') for k in range(nScen)]+[open(f'../../data/Networks/{net}/Scenarios/PHFit{nPhases}_scenTotal.txt','w')]	
 	arcs=loadNet(net=net)
 	for i,j in arcs.keys():
 		for fin,fout in zip(files,filesOut):
@@ -262,9 +262,9 @@ def fitPH(nScen,nPhases,net='Chicago-Sketch'):
 			data=list(map(float,data.replace('[','').replace(']','').split(', ')))
 			
 			ph,loglike=get_PH_HE(data,nPhases)			
-			fout.write(f'{i};{j};{arcs[i,j][0]};{arcs[i,j][2]};{[list(map(lambda x: round(float(x),10),k))[0]for k in ph.alpha.tolist()]};{[list(map(lambda x: round(float(x),10),k))for k in ph.T.tolist()]}\n')
+			fout.write(f'{i}\t{j}\t{arcs[i,j][0]}\t{arcs[i,j][2]}\t{[list(map(lambda x: round(float(x),10),k))[0]for k in ph.alpha.tolist()]}\t{[list(map(lambda x: round(float(x),10),k))for k in ph.T.tolist()]}\n')
 		print(i,j)
-
+	for fin,fout in zip(files,filesOut): (fin.close(),fout.close())
 
 
 
@@ -276,6 +276,7 @@ if __name__ == '__main__':
 	#createSceanrios(nScen=5,n=200,net='Chicago-Sketch')
 
 	fitPH(nScen=5,nPhases=3,net='Chicago-Sketch')
+
 
 
 
