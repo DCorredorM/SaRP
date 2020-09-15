@@ -26,22 +26,25 @@ import java.nio.file.Paths;
 
 import jphase.ContPhaseVar;
 import jphase.DenseContPhaseVar;
+import sun.java2d.pipe.AlphaColorPipe;
 
 public class PulseMain {
 
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
-		//String Mfile="/Users/davidcorredor/Documents/PulseAlgorithm/SaRP/data/Networks";
 		
-//		Path currentDir = Paths.get(".");
-//		System.out.println(currentDir.toAbsolutePath());
-//		Path parentDir = Paths.get("..");
 		
-		String city="Chicago-Sketch";
-		String city_file=Paths.get(Paths.get("..").toAbsolutePath()+"/data/Networks"+"/"+city).normalize().toString();
+		try {
+			String[] arg= {args[0],args[1]};		
+			runPulse(arg);			
+		} catch (Exception e) {
+			String city="Chicago-Sketch";
+			String city_file=Paths.get("../data/Networks"+"/"+city).normalize().toString();
+//			System.out.println(Paths.get(city_file).toAbsolutePath().normalize());
+			String[] arg= {city_file,city};		
+			runPulse(arg);
+		}
 		
-		String[] arg= {city_file,city};		
-		runPulse(arg);
 		
 	}
 	
@@ -61,12 +64,12 @@ public class PulseMain {
 				
 		//Reads the file
 		String actLine = null;
-		String [] information = new String [7];
+		String [] information = new String [8];
 		int rowA = 0;
 		int colA = 0;
 
-		while((actLine = bufRedr.readLine()) != null && rowA < 7){	
-			String [] info1 = actLine.split(":");
+		while((actLine = bufRedr.readLine()) != null && rowA < 8){	
+			String [] info1 = actLine.split(":");			
 			information[rowA] = info1[1];
 			//System.out.println(rowA+" "+info1[0]+" "+info1[1]);
 			rowA++;
@@ -77,7 +80,7 @@ public class PulseMain {
 		int num_nodes=Integer.parseInt(information[2]);
 		int num_arcs=Integer.parseInt(information[1]);
 		int N_Phases=Integer.parseInt(information[6]);
-
+		double alpha=Double.parseDouble(information[7]);
 
 
 		String net_file = city_file +"/"+information[0];
@@ -112,7 +115,7 @@ public class PulseMain {
 
 
 		network.SetConstraint(T_max);
-		network.Setaplpha(0.9);
+		network.Setaplpha(alpha);
 
 
 		//Pulse algorithm parameters:
@@ -172,7 +175,7 @@ public class PulseMain {
 		System.out.println(text);
 		String results_path=city_file+"/Results/"+information[0];
 
-
+//		System.out.println(results_path);
 		try(FileWriter fw = new FileWriter(results_path, true);
 				BufferedWriter bw = new BufferedWriter(fw);
 				PrintWriter out = new PrintWriter(bw))

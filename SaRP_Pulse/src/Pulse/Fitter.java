@@ -210,7 +210,7 @@ public class Fitter {
 			
 			Arcs[row2][0] = Integer.parseInt(Actual[0])-1;
 			Arcs[row2][1] =  Integer.parseInt(Actual[1])-1;
-			Distance[row2] = Integer.parseInt(Actual[2]);
+			Distance[row2] = (int)Math.floor(Double.parseDouble(Actual[2]));
 			MinTime[row2]= (int)Math.floor(Double.parseDouble(Actual[3]));
 			
 			double[] tau;
