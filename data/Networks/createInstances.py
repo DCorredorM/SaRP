@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 sys.path.append(os.path.abspath(f'../../SaRP_Pulse_Python/src'))
 from pulse import *
 
-global city,DG,pairs,tightness,inf_tightness
+global city,DG,pairs,tightness,alpha
 cities='SiouxFalss','Chicago-Sketch','GoldCoast','Philadelphia','Sydney'
 
 def creates_graphs():
@@ -66,8 +66,7 @@ def createRandomInst(n,wb='w'):
 		f.write(f'{s}\t{t}\t{tMax}\n')
 	f.close()
 
-
-def calcTMax(s,t):
+def calcTMax1(s,t):
 	'''
 	Computes an interesting TMax for the SaRP problem from s to t
 	Args:
@@ -123,7 +122,37 @@ def calcTMax(s,t):
 		
 	
 	return T_max_star
+
+def calcTMax(s,t):
+	'''
+	Computes Time budget using the empirical distribution of the shortest time path
+	Args:
+		s(int):source node.
+		t(int):target node.
+	Return:
+		TMax(double):Time budget for (s,t) pair.
+	'''
+	spT=nx.shortest_path(DG,s,t,'Time')
+	spC=nx.shortest_path(DG,s,t,'Cost')
 	
+	TspT=alphaQuantile(list(zip(spT[:-1],spT[1:])),alpha)
+	TspC=alphaQuantile(list(zip(spC[:-1],spC[1:])),alpha)	
+	return TspT+(TspC-TspT)*(1-tightness)
+
+
+def alphaQuantile(arcs,a):
+	'''
+	Computes the alpha-Quantile for the given arcs
+	Args:
+		arcs(list):Arcs to compute Quantile.
+		a(double):Quantile to compute.
+	Return:
+		aQuantile(double):Alpha quantile for given arcs.
+	'''
+	data=readRealizations(arcs)
+	tmin=sum(DG[i][j]['tmin'] for i,j in arcs)
+	return tmin+np.quantile(data,a)
+
 def readRealizations(arcs):
 	'''
 	Reads the historical data for the given arcs
@@ -143,7 +172,8 @@ def readRealizations(arcs):
 		i,j,data=readLine(l)
 		if (i,j) in arcs:
 			Data[i,j]=np.array(data)
-	return Data
+	data=sum(Data.values())
+	return data
 
 def eval_path(path1,pT_max):
 	'''
@@ -156,10 +186,10 @@ def eval_path(path1,pT_max):
 	'''
 	if len(path1)>0:
 		pat=list(zip(path1[:-1],path1[1:]))
-		Data=readRealizations(pat)	
-		data=sum(Data.values())
+		data=readRealizations(pat)	
 		
-		tmin=sum(DG[i][j]['tmin'] for i,j in pat)	
+		
+		tmin=sum(DG[i][j]['tmin'] for i,j in pat)
 		ind=list(map(lambda x: x<=pT_max-tmin,data))
 		
 
@@ -188,11 +218,12 @@ if __name__ == '__main__':
 	'''
 	city=cities[1]
 	creates_graphs()
-	tightness=0.80
+	tightness=0.50
 	inf_tightness=0.80
+	alpha=0.8
 	########################################################
-
-	createRandomInst(n=3,wb='a')
+	
+	createRandomInst(n=3,wb='w')
 
 
 
