@@ -28,7 +28,7 @@ def runInstances(nPhases,nScen,alpha,clearF=True):
 	if clearF: clearResultFiles()
 	
 	folder=os.path.abspath(f'../../data/Networks/{city}')
-	inst=open(f'{folder}/{city}_instances_mod.txt','r')
+	inst=open(f'{folder}/{city}_instances.txt','r')
 	gamma=0.9
 
 	scen=list(range(1,nScen+1))+['Total']
@@ -49,7 +49,7 @@ def clearResultFiles():
 	'''
 	clears all result files from city path
 	'''
-	folder=os.path.abspath(f'../../data/Networks/{city}/Results/Scenarios/*')
+	folder=os.path.abspath(f'../../data/Networks/{city}/Results/Scenarios/*.txt')
 	if os.name=='posix':
 		os.popen(f'rm {folder}')
 	else:
@@ -62,8 +62,7 @@ def clearResultFiles():
 
 
 if __name__ == '__main__':
-	city='Chicago-Sketch'
-	print(os.name)
+	city='Chicago-Sketch'	
 	#runInstances(3,5,0.8)
 	#print(os.name)
 	runInstances(3,5,0.8)
