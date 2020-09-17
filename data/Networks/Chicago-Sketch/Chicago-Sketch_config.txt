@@ -6,3 +6,4 @@ Start Node:919
 End Node:384
 Number of Phases:10
 alpha:0.8
+time limit:60

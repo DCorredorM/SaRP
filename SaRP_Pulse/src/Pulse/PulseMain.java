@@ -64,11 +64,11 @@ public class PulseMain {
 				
 		//Reads the file
 		String actLine = null;
-		String [] information = new String [8];
+		String [] information = new String [9];
 		int rowA = 0;
 		int colA = 0;
 
-		while((actLine = bufRedr.readLine()) != null && rowA < 8){	
+		while((actLine = bufRedr.readLine()) != null && rowA < 9){	
 			String [] info1 = actLine.split(":");			
 			information[rowA] = info1[1];
 			//System.out.println(rowA+" "+info1[0]+" "+info1[1]);
@@ -81,6 +81,7 @@ public class PulseMain {
 		int num_arcs=Integer.parseInt(information[1]);
 		int N_Phases=Integer.parseInt(information[6]);
 		double alpha=Double.parseDouble(information[7]);
+		double timeLimit=Double.parseDouble(information[8]);
 
 
 		String net_file = city_file +"/"+information[0];
@@ -147,7 +148,8 @@ public class PulseMain {
 		//Starts the clock
 
 		double iniTime = System.nanoTime(); 
-		network.pulse_time= System.nanoTime(); 
+		network.pulseTimeLimit=timeLimit;
+		network.pulse_time= System.nanoTime();		
 		double [ ] [ ] A = new double[][] {{0}};
 		double [ ]  tau = new double[] {0};
 		ContPhaseVar ptRV=new DenseContPhaseVar(tau, A);

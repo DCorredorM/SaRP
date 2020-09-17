@@ -1,6 +1,6 @@
 import os
 
-global city
+global city,timeLimit
 
 def runExperiment():
 	'''
@@ -37,7 +37,7 @@ def runInstances(nPhases,nScen,alpha,clearF=True):
 		i=l.replace('\n','').split('\t')
 		for k in scen:
 			config=open(f'{folder}/{city}_config.txt','w')
-			text=f'DataFile:Scenarios/PHFit{nPhases}_scen{k}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{float(i[2])*gamma}\nStart Node:{i[0]}\nEnd Node:{i[1]}\nNumber of Phases:{nPhases}\nalpha:{alpha}'
+			text=f'DataFile:Scenarios/PHFit{nPhases}_scen{k}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{float(i[2])*gamma}\nStart Node:{i[0]}\nEnd Node:{i[1]}\nNumber of Phases:{nPhases}\nalpha:{alpha}\nTime Limit:{timeLimit}'
 			config.write(text)
 			config.close()
 			runExperiment()
@@ -62,7 +62,8 @@ def clearResultFiles():
 
 
 if __name__ == '__main__':
-	city='Chicago-Sketch'	
+	city='Chicago-Sketch'
+	TimeLimit=5000
 	#runInstances(3,5,0.8)
 	#print(os.name)
 	runInstances(nPhases=10,nScen=5,alpha=0.8)

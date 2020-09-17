@@ -7,7 +7,7 @@
  * 
  * 
  * @author L. Lozano & D. Duque
- * @affiliation Universidad de los Andes - Centro para la Optimización y Probabilidad Aplicada (COPA)
+ * @affiliation Universidad de los Andes - Centro para la Optimizaciï¿½n y Probabilidad Aplicada (COPA)
  * @url http://copa.uniandes.edu.co/
  * 
  */
@@ -79,7 +79,6 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 	 */
 	static int finalNode;
 	
-	
 	/**
 	 * The final probability of arriving on time
 	 */
@@ -110,6 +109,8 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 	static int calc_needed;
 	static int calc_made;
 	static double pulse_time;
+	static double pulseTimeLimit;
+	
 	
 	/**
 	 * creates a pulse graph

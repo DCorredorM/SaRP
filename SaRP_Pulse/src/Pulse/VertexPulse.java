@@ -534,7 +534,9 @@ public class VertexPulse {
 						//Infeasibility pruning
 						if (checkInfeasibility(newProb,path)) {
 							//If not pruned the pulse travels to the next head node
-							PulseGraph.vertexes[a].pulse(newCost,newtRV, newProb,newTmin,newMean,path);
+							if ((System.nanoTime()-PulseGraph.pulse_time)/1000000000<PulseGraph.pulseTimeLimit){
+								PulseGraph.vertexes[a].pulse(newCost,newtRV, newProb,newTmin,newMean,path);
+							}
 						}else {
 							//System.out.println("Pode por dominancia");
 							PulseGraph.Infeasibility+=1;

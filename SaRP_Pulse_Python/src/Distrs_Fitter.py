@@ -269,11 +269,6 @@ def fitPH(nScen,nPhases,net='Chicago-Sketch'):
 		print(n/N)
 	for fin,fout in zip(files,filesOut): (fin.close(),fout.close())
 
-
-
-
-
-
 if __name__ == '__main__':
 	
 	#createSceanrios(nScen=5,n=200,net='Chicago-Sketch')
