@@ -59,6 +59,7 @@ def createRandomInst(n,wb='w'):
 		None
 	'''
 	f=open(f'{city}/{city}_instances.txt',wb)
+	f.write(f'{"#"*40}\nCreatin {n} instances with tightness: {tightness}\n{"#"*40}')
 	for i in range(n):
 		s=rnd.choice(list(DG.nodes()))
 		t=createPair(s)
@@ -215,12 +216,12 @@ if __name__ == '__main__':
 	'''
 	city=cities[1]
 	creates_graphs()
-	tightness=0.50
+	tightness=0.30
 	inf_tightness=0.80
 	alpha=0.8
 	########################################################
 	
-	createRandomInst(n=3,wb='w')
+	createRandomInst(n=30,wb='w')
 
 
 
