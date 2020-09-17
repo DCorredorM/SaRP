@@ -139,7 +139,6 @@ def calcTMax(s,t):
 	TspC=alphaQuantile(list(zip(spC[:-1],spC[1:])),alpha)	
 	return TspT+(TspC-TspT)*(1-tightness)
 
-
 def alphaQuantile(arcs,a):
 	'''
 	Computes the alpha-Quantile for the given arcs
@@ -208,8 +207,6 @@ def eval_path(path1,pT_max):
 	else:
 		return 0
 	
-
-
 
 if __name__ == '__main__':
 	########################################################
