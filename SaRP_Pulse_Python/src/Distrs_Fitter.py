@@ -278,7 +278,9 @@ if __name__ == '__main__':
 	
 	#createSceanrios(nScen=5,n=200,net='Chicago-Sketch')
 
-	fitPH(nScen=5,nPhases=5,net='Chicago-Sketch')
+	
+
+	fitPH(nScen=5,nPhases=10,net='Chicago-Sketch')
 
 
 
