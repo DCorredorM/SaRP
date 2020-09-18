@@ -2,8 +2,7 @@
 This file creates the insatnces for the given city
 '''
 
-import os,sys,networkx as nx,random as rnd, numpy as np
-import matplotlib.pyplot as plt
+import os,sys,networkx as nx,random as rnd, numpy as np,time
 sys.path.append(os.path.abspath(f'../../SaRP_Pulse_Python/src'))
 from pulse import *
 
@@ -59,6 +58,7 @@ def createRandomInst(n,wb='w'):
 		None
 	'''
 	f=open(f'{city}/{city}_instances.txt',wb)
+	f.write(f'{"#"*40}\n#Creatin {n} instances with tightness: {tightness}\n{"#"*40}')
 	for i in range(n):
 		s=rnd.choice(list(DG.nodes()))
 		t=createPair(s)
@@ -66,7 +66,7 @@ def createRandomInst(n,wb='w'):
 		f.write(f'{s}\t{t}\t{tMax}\n')
 	f.close()
 
-def calcTMax1(s,t):
+def calcTMax(s,t,timelimit=200):
 	'''
 	Computes an interesting TMax for the SaRP problem from s to t
 	Args:
@@ -75,7 +75,6 @@ def calcTMax1(s,t):
 	Return:
 		Tmax(double):Time budget for s,t pair.	
 	'''	
-
 	PG=pulse_graph(G=DG,T_max=None,source=s, target=t,tightness=1)
 	pulse_path,pulse_cost,pulse_sol_time=PG.run_pulse()		
 	
@@ -91,7 +90,7 @@ def calcTMax1(s,t):
 	except:
 		stop=True
 
-	
+	time_creit=time.time()
 	while not stop:									
 		rho=eval_path(pulse_path,T_max)
 		sp_rho=eval_path(S_pat,T_max)
@@ -117,13 +116,13 @@ def calcTMax1(s,t):
 			pulse_path,pulse_cost,pulse_sol_time=PG.run_pulse()		
 			T_max=PG.T_max
 		
-		# if time.time()-time_creit>=search_time:
-		# 	stop=True
+		if time.time()-time_creit>=timelimit:
+			stop=True
 		
 	
 	return T_max_star
 
-def calcTMax(s,t):
+def calcTMax1(s,t):
 	'''
 	Computes Time budget using the empirical distribution of the shortest time path
 	Args:
@@ -188,7 +187,7 @@ def eval_path(path1,pT_max):
 		data=readRealizations(pat)	
 		
 		
-		tmin=sum(DG[i][j]['tmin'] for i,j in pat)
+		tmin=sum(int(DG[i][j]['tmin']) for i,j in pat)
 		ind=list(map(lambda x: x<=pT_max-tmin,data))
 		
 
@@ -200,7 +199,7 @@ def eval_path(path1,pT_max):
 			print("El tmin calculado es ",tmin)
 			#plt.show()
 			plt.clf()
-
+		print("El tmin calculado es ",tmin)
 		if len(pat)==0:
 			prob=0
 		return prob
@@ -215,14 +214,19 @@ if __name__ == '__main__':
 	'''
 	city=cities[1]
 	creates_graphs()
-	tightness=0.50
-	inf_tightness=0.80
+	tightness=0.80
+	inf_tightness=0.85
 	alpha=0.8
 	########################################################
 	
-	createRandomInst(n=3,wb='w')
+	#createRandomInst(n=30,wb='w')
 
 
+	p=[866, 867, 868, 819, 818, 828, 833, 832, 837, 836, 841, 840, 842, 664, 447, 663, 668, 667, 518]
+	p=[i+1 for i in p]
+	tmax=calcTMax1(s=p[0],t=p[-1])
+	print(tmax)
+	print(eval_path(p,tmax))
 
 	
 	
