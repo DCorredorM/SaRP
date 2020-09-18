@@ -29,27 +29,34 @@ def runInstances(nPhases,nScen,alpha,clearF=True):
 	
 	folder=os.path.abspath(f'../../data/Networks/{city}')
 	inst=open(f'{folder}/{city}_instances.txt','r')
+
 	gamma=0.9
 
 	scen=list(range(1,nScen+1))+['Total']
 	nn=0
 	for l in inst:
-		i=l.replace('\n','').split('\t')
-		for k in scen:
-			config=open(f'{folder}/{city}_config.txt','w')
-			text=f'DataFile:Scenarios/PHFit{nPhases}_scen{k}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{float(i[2])*gamma}\nStart Node:{i[0]}\nEnd Node:{i[1]}\nNumber of Phases:{nPhases}\nalpha:{alpha}\nTime Limit:{timeLimit}'
-			config.write(text)
-			config.close()
-			runExperiment()
-		nn+=1
-		if nn>=1000:
-			break
+		if l[0]!='#':
+			i=l.replace('\n','').split('\t')
+			for k in scen[::-1]:
+				config=open(f'{folder}/{city}_config.txt','w')
+				print(i)
+				text=f'DataFile:Scenarios/PHFit{nPhases}_scen{k}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{float(i[2])*gamma}\nStart Node:{i[0]}\nEnd Node:{i[1]}\nNumber of Phases:{nPhases}\nalpha:{alpha}\nTime Limit:{timeLimit}'
+				config.write(text)
+				config.close()
+				runExperiment()
+			nn+=1
+			if nn>=1000:
+				break
 
 def clearResultFiles():
 	'''
 	clears all result files from city path
 	'''
 	folder=os.path.abspath(f'../../data/Networks/{city}/Results/Scenarios/*.txt')
+	f=open(folder[:-5]+'n.txt','w')
+	f.write('i')
+	f.close()
+
 	if os.name=='posix':
 		os.popen(f'rm {folder}')
 	else:
@@ -63,8 +70,11 @@ def clearResultFiles():
 
 if __name__ == '__main__':
 	city='Chicago-Sketch'
-	TimeLimit=5000
+	timeLimit=5000
 	#runInstances(3,5,0.8)
 	#print(os.name)
+	
 	runInstances(nPhases=10,nScen=5,alpha=0.8)
+	runInstances(nPhases=5,nScen=5,alpha=0.8)
+	runInstances(nPhases=3,nScen=5,alpha=0.8)
 
