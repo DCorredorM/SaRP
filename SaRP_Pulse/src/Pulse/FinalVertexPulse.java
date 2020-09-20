@@ -26,7 +26,7 @@ public class FinalVertexPulse extends VertexPulse {
 	/**
 	 * Node id
 	 */
-	private int id;
+	public int id;
 	
 	/**
 	 * SP stuff
@@ -201,10 +201,10 @@ public class FinalVertexPulse extends VertexPulse {
 	 * This is the pulse for the last node !!!
 	 * If the path is feasible and updates the primal bound the information on the best solution found is updated
 	 */
-	public void pulse(int pCost, ContPhaseVar ptRV,double pProb, double ptmin,double pMean,  ArrayList<Integer> path ){		
+	public void pulse(int pCost, ContPhaseVar ptRV,double pProb, double ptmin,double pMean,  ArrayList<Integer> path,double[] pData){		
 		// Add node id to path
 		path.add(id);
-		//System.out.println("Llegue aca "+pCost+" - "+pMean+" - "+PulseGraph.PrimalBound + " - "+pProb);
+//		System.out.println("Llegue aca (final) "+id+" - "+pCost+" - "+pMean+" - "+PulseGraph.PrimalBound + " - "+pProb);
 		// If the path is feasible and updates the primal bound the information on the best solution found is updated
 		if(pCost<PulseGraph.PrimalBound && pProb >= PulseGraph.alpha){
 			// Update the best solution known

@@ -45,6 +45,12 @@ public class PulseMain {
 			runPulse(arg);
 		}
 		
+//		double[] tau= {0.5,0.1,0};
+//		double [][] T= {{-0.1,0.005,0.004},{1,-1,0},{0.015,0.004,-0.2}};
+//		
+//		DenseContPhaseVar ph= new DenseContPhaseVar(tau, T);
+//		
+//		System.out.println(ph.expectedValue());
 		
 	}
 	
@@ -64,27 +70,28 @@ public class PulseMain {
 				
 		//Reads the file
 		String actLine = null;
-		String [] information = new String [9];
+		String [] information = new String [10];
 		int rowA = 0;
 		int colA = 0;
 
-		while((actLine = bufRedr.readLine()) != null && rowA < 9){	
+		while((actLine = bufRedr.readLine()) != null && rowA < 10){	
 			String [] info1 = actLine.split(":");			
 			information[rowA] = info1[1];
 			//System.out.println(rowA+" "+info1[0]+" "+info1[1]);
 			rowA++;
 		}
-		double T_max=Double.parseDouble(information[3]);
-		int source =Integer.parseInt(information[4]);
-		int target =Integer.parseInt(information[5]);
-		int num_nodes=Integer.parseInt(information[2]);
-		int num_arcs=Integer.parseInt(information[1]);
-		int N_Phases=Integer.parseInt(information[6]);
-		double alpha=Double.parseDouble(information[7]);
-		double timeLimit=Double.parseDouble(information[8]);
+		double T_max=Double.parseDouble(information[4]);
+		int source =Integer.parseInt(information[5]);
+		int target =Integer.parseInt(information[6]);
+		int num_nodes=Integer.parseInt(information[3]);
+		int num_arcs=Integer.parseInt(information[2]);
+		int N_Phases=Integer.parseInt(information[7]);
+		double alpha=Double.parseDouble(information[8]);
+		double timeLimit=Double.parseDouble(information[9]);
 
 
 		String net_file = city_file +"/"+information[0];
+		String net_fileD = city_file +"/"+information[1];
 		//Choose pulse direction: 1: Forward -  2: Backward
 
 		int direction = 1;
@@ -96,15 +103,17 @@ public class PulseMain {
 		Fitter dataA = null;
 		//Forward direction: 
 		if(direction == 1) {
-			dataA = new Fitter(num_nodes,num_arcs,source,target,0,net_file,N_Phases);
+			dataA = new Fitter(num_nodes,num_arcs,source,target,0,net_file,net_fileD,N_Phases);
 			dataA.ReadDimacsF();
+			dataA.loadData();
 			network = S_createGraph(dataA);
 
 		}
 		//Backward direction: 
 		if(direction == 2) {
-			dataA = new Fitter(num_nodes,num_arcs,source,target,0,net_file,N_Phases );
+			dataA = new Fitter(num_nodes,num_arcs,source,target,0,net_file,net_fileD,N_Phases );
 			dataA.ReadDimacsF();
+			dataA.loadData();
 			network = S_createGraph(dataA);
 		}
 
@@ -153,25 +162,35 @@ public class PulseMain {
 		double [ ] [ ] A = new double[][] {{0}};
 		double [ ]  tau = new double[] {0};
 		ContPhaseVar ptRV=new DenseContPhaseVar(tau, A);
-		network.getVertexByID(dataA.Source).pulse(0, ptRV, 1, 0,0, finalPath);
-
-		/*
-		try {
-			network.getVertexByID(dataA.Source).pulse(0, ptRV, 1, 0,0, finalPath);
-		}
-		catch (Exception e) {
-			System.out.println(e);
-		}
-		 */
-		//finalPath = completeThePath(dataA,network);
-		finalPath = network.Path;
-
+		double [] data0=new double[dataA.NumSample];
+		
+		
+		network.getVertexByID(dataA.Source).pulse(0, ptRV, 1, 0,0, finalPath,data0);
+		
+//		int[] pat= {142, 688,698 , 700, 812, 471, 470, 469, 468, 467, 457, 466, 465, 861, 888, 894, 348};
+//		
+//		for (int i : pat) {
+//			finalPath.add(i);			
+//		}
+//		
+//		ptRV=dataA.fitPath(finalPath);
+//		
+//		double tMaxTemp= 4047.9949867853784-network.minTime;
+//		
+//		double probT= network.evalPath(finalPath,tMaxTemp);
+//		
+//		
+//		System.out.println("La prob de aca es: "+ptRV.cdf(tMaxTemp));
+//		System.out.println("La mean: "+ptRV.expectedValue());		
+//		
+		
 		//Ends the clock
 
 		double finalTime = (System.nanoTime() - iniTime)/1000000000;
 
 
 		//Print results
+		finalPath = network.Path;
 
 		String text =source+"\t"+target+"\t"+ finalTime+"\t"+network.PrimalBound+"\t"+network.minTime+"\t"+ network.finalProb+"\t"+network.Bound+"\t"+network.Infeasibility+"\t"+network.Dominance+"\t"+finalPath;
 		System.out.println(text);
@@ -275,14 +294,14 @@ public class PulseMain {
 					Fitter dataA = null;
 					//Forward direction: 
 					if(direction == 1) {
-						dataA = new Fitter(num_nodes,num_arcs,source,target,i,net_file,N_Phases);
+						dataA = new Fitter(num_nodes,num_arcs,source,target,i,net_file,net_file,N_Phases);
 						dataA.ReadDimacsF();
 						network = S_createGraph(dataA);
 
 					}
 					//Backward direction: 
 					if(direction == 2) {
-						dataA = new Fitter(num_nodes,num_arcs,source,target,i,net_file,N_Phases );
+						dataA = new Fitter(num_nodes,num_arcs,source,target,i,net_file,net_file,N_Phases );
 						dataA.ReadDimacsF();
 						network = S_createGraph(dataA);
 					}
@@ -331,7 +350,7 @@ public class PulseMain {
 					double [ ] [ ] A = new double[][] {{0}};
 					double [ ]  tau = new double[] {0};
 					ContPhaseVar ptRV=new DenseContPhaseVar(tau, A);
-					network.getVertexByID(dataA.Source).pulse(0, ptRV, 1, 0,0, finalPath);
+					network.getVertexByID(dataA.Source).pulse1(0, ptRV, 1, 0,0, finalPath);
 
 					/*
 					try {
@@ -555,14 +574,12 @@ public class PulseMain {
 		PulseGraph Gd = new PulseGraph(numNodes);
 		for (int i = 0; i < numNodes; i++) {
 			if(i!=(data.LastNode)){
-
 				Gd.addVertex(new VertexPulse(i) ); //Primero lo creo, y luego lo meto. El id corresponde al n�mero del nodo
 			}
 		}
 
 		FinalVertexPulse vv = new FinalVertexPulse(data.LastNode);
 		Gd.addFinalVertex(vv);
-
 
 		for(int i = 0; i <data.NumArcs; i ++){
 

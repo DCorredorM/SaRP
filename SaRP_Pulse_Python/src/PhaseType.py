@@ -20,7 +20,6 @@ class PH:
 		else:
 			self.a=-self.T*ones(len(T),1)
 	
-			
 	def cdf(self,x):
 		#print(len(self.T))
 		if len(self.T)>0:

@@ -20,11 +20,12 @@ import java.util.Set;
 import org.jgrapht.EdgeFactory;
 import org.jgrapht.Graph;
 
+import jdk.javadoc.internal.doclets.formats.html.markup.Head;
 import jphase.ContPhaseVar;
 import jphase.DenseContPhaseVar;
 
 public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
-	
+
 	/**
 	 * The nodes
 	 */
@@ -78,31 +79,31 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 	 * The final node (before the path completion)
 	 */
 	static int finalNode;
-	
+
 	/**
 	 * The final probability of arriving on time
 	 */
 	static double finalProb;
-	
+
 	/**
 	 * The phase type discribing the travel time.
 	 */
-	
+
 	static ContPhaseVar PH;
-	
+
 	/**
 	 * The phase type discribing the travel time.
 	 */
-	
+
 	static double Mean;
-	
+
 	/**
 	 * The phase type discribing the travel time.
 	 */
-	
+
 	static double minTime;
-	
-	
+
+
 	static int Bound;
 	static int Infeasibility;
 	static int Dominance;
@@ -111,7 +112,8 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 	static double pulse_time;
 	static double pulseTimeLimit;
 	
-	
+	static int refit;
+
 	/**
 	 * creates a pulse graph
 	 * @param numNodes
@@ -127,14 +129,15 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 		double [ ] [ ] A = new double[][] {{0}};
 		double [ ]  tau = new double[] {0};
 		PH=new DenseContPhaseVar(tau, A);	
-		
+
 		Bound=0;
 		Infeasibility=0;
 		Dominance=0;
-		
+		refit=1;
+
 	}
-	
-	
+
+
 	public static int getFinalCost() {
 		return finalCost;
 	}
@@ -153,7 +156,7 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 	public static void setFinalTime(int finalTime) {
 		PulseGraph.finalTime = finalTime;
 	}
-	
+
 	public static void setFinalProb(double finalProb) {
 		PulseGraph.finalProb = finalProb;
 	}
@@ -175,7 +178,7 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	/**
 	 * Returns the number of nodes
 	 * @return
@@ -192,7 +195,7 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 	public VertexPulse getVertexByID(int id){
 		return vertexes[id];
 	}
-	
+
 	/**
 	 * Adds an edge with a weight
 	 * @param sourceVertex arc tail
@@ -210,8 +213,8 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 		if(pMinTime>Ct){
 			Ct=pMinTime;
 		}
-		
-		
+
+
 		//To the head node we add an incoming arc
 		vertexes[targetVertex.getID()].addReversedEdge(new EdgePulse(d,pMinTime, timeRV, targetVertex , sourceVertex, id));
 		//new EdgePulse(d, pMinTime, timeRV, nT, nH, nid)
@@ -219,8 +222,8 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 		vertexes[sourceVertex.getID()].magicIndex.add(id);
 		return null;
 	}
-	
-	
+
+
 	/**
 	 * Adds and edge
 	 */
@@ -363,7 +366,7 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	/**
 	 * Returns the distance bound
 	 * @return
@@ -380,7 +383,7 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 	{
 		return Ct;
 	}
-	
+
 	/**
 	 * Restarts the network
 	 */
@@ -389,48 +392,83 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 			vertexes[i].reset();
 		}
 	}
-	
+
 	/**
 	 * Sets the constraint
 	 * @param timeC
 	 */
 	public void SetConstraint(double timeC) {
-		
+
 		this.TimeC=timeC;
-		
+
 	}
-	
+
 	/**
 	 * Sets the constraint
 	 * @param timeC
 	 */
 	public void Setaplpha(double pAlpha) {
-		
+
 		this.alpha=pAlpha;
-		
+
 	}
-	
+
 	/**
 	 * Sets the primal bound
 	 * @param bound
 	 */
 	public void setPrimalBound(int bound) {
-		
+
 		this.PrimalBound=bound;
-		
+
 	}
-	
+
 	/**
 	 * Sets the confidence leve alpha
 	 * @param bound
 	 */
 	public void setPrimalBound(double al) {
-		
+
 		this.alpha=al;
-		
+
 	}
-	
-	
+
+	/**
+	 * Computes the reliability of the given path.
+	 * @param pPath
+	 * @return
+	 */
+	public double evalPath(ArrayList<Integer> pPath,double tmax) {
+		double prob=0;
+
+		double [ ] [ ] A = new double[][] {{0}};
+		double [ ]  tau = new double[] {0};
+		ContPhaseVar ptRV=new DenseContPhaseVar(tau, A);
+		int tmin=0;
+
+		VertexPulse tail;
+		VertexPulse head;
+		for (int i = 0; i < pPath.size()-1; i++) {
+			tail = getVertexByID(pPath.get(i));
+			head = getVertexByID(pPath.get(i+1));
+			for (int j = 0; j < tail.magicIndex.size(); j++) {
+				int e = (Integer) tail.magicIndex.get(j); //Arc index				
+
+				if (vertexes[Fitter.Arcs[e][1]].id==head.id) {
+					ptRV=Fitter.TimeRV[e].sum(ptRV);
+					tmin+=Fitter.MinTime[e];					
+				}				
+			}				
+		}
+
+//		System.out.println("El tmin es: "+tmin);
+//		System.out.println(ptRV.toString());
+//		System.out.println("El valE es: "+ptRV.expectedValue());
+		prob=ptRV.cdf(Math.max(0,tmax-tmin)); //Coputes the probability of arriving on time to this node
+		return prob;
+	}
+
+
 
 
 }

@@ -19,6 +19,7 @@ import org.graalvm.compiler.debug.CSVUtil.Escape;
 
 import jphase.ContPhaseVar;
 import jphase.DenseContPhaseVar;
+import jphase.fit.EMHyperErlangFit;
 import no.uib.cipr.matrix.sparse.IterativeSolverNotConvergedException;
 
 
@@ -46,6 +47,8 @@ public class VertexPulse {
 	int minTime;
 	int maxDist;
 
+
+
 	/**
 	 * SP stuff
 	 */
@@ -57,7 +60,7 @@ public class VertexPulse {
 	/**
 	 * The vertex id
 	 */
-	private int id;
+	public int id;
 	private VertexPulse leftDist;
 	private VertexPulse rigthDist;
 	private VertexPulse leftTime;
@@ -463,7 +466,7 @@ public class VertexPulse {
 					if (checkInfeasibility(newProb,path) && !PulseGraph.vertexes[a].CheckLabels(newCost,newProb,path,a) ){
 						// If not pruned the pulse travels to the next head node
 						if ((System.nanoTime()-PulseGraph.pulse_time)/1000000000<5000){
-							PulseGraph.vertexes[a].pulse(newCost,newtRV, newProb,newTmin,newMean,path);
+							PulseGraph.vertexes[a].pulse1(newCost,newtRV, newProb,newTmin,newMean,path);
 						}
 
 					}
@@ -491,7 +494,7 @@ public class VertexPulse {
 	 * @param pMean
 	 * @param path
 	 */
-	public void pulse(int pCost, ContPhaseVar ptRV,double pProb, double ptmin,double pMean,  ArrayList<Integer> path ) {
+	public void pulse2(int pCost, ContPhaseVar ptRV,double pProb, double ptmin,double pMean,  ArrayList<Integer> path ) {
 		// if a node is visited for first time, sort the arcs
 		if (this.firstTime) {
 			this.firstTime = false;
@@ -512,20 +515,21 @@ public class VertexPulse {
 
 			// Update the visit indicator
 			PulseGraph.Visited[id]=1;
-			
+
 			// Pulse all the head nodes for the outgoing arcs only if getting to this node passes all the tests
-			
+
 			for (int i = 0; i < magicIndex.size(); i++) {
-				
+
 				// Update distance and time
 				int e = (Integer) magicIndex.get(i); //Arc index
 				int a = Fitter.Arcs[e][1];			// Head Node
 				int newCost = (pCost + Fitter.Distance[e]);// New cost
 				double newMean = pMean + Fitter.Mean[e];// New mean
 				ContPhaseVar newtRV = ptRV.sum(Fitter.TimeRV[e]);// New time random variable.
+
 				double newTmin=ptmin +Fitter.MinTime[e];// New free flow time					
 				double newProb=0;				
-				
+
 				//Bound pruning
 				if ((newCost + PulseGraph.vertexes[a].getMinDist() < PulseGraph.PrimalBound) ){
 					newProb=calcProb(newtRV,newTmin,a);
@@ -535,13 +539,13 @@ public class VertexPulse {
 						if (checkInfeasibility(newProb,path)) {
 							//If not pruned the pulse travels to the next head node
 							if ((System.nanoTime()-PulseGraph.pulse_time)/1000000000<PulseGraph.pulseTimeLimit){
-								PulseGraph.vertexes[a].pulse(newCost,newtRV, newProb,newTmin,newMean,path);
+								PulseGraph.vertexes[a].pulse2(newCost,newtRV, newProb,newTmin,newMean,path);
 							}
 						}else {
 							//System.out.println("Pode por dominancia");
 							PulseGraph.Infeasibility+=1;
 						}
-						
+
 					}else {
 						//System.out.println("Pode por dominancia");
 						PulseGraph.Dominance+=1;
@@ -557,7 +561,108 @@ public class VertexPulse {
 			PulseGraph.Visited[id]=0;
 		}				
 	}
-	
+
+
+
+	public void pulse(int pCost, ContPhaseVar ptRV,double pProb, double ptmin,double pMean,  ArrayList<Integer> path,double[] pData) {
+//		System.out.println("Llegue aca: "+id+" - "+pCost+" - "+pMean+" - "+PulseGraph.PrimalBound + " - "+pProb);
+		// if a node is visited for first time, sort the arcs
+		if (this.firstTime) {
+			this.firstTime = false;
+			this.Sort(this.magicIndex); 
+			leftDist = null;
+			rigthDist = null;
+			reverseEdges = null;
+		}
+
+		// Label update
+		changeLabels(pCost,pProb,path); 
+
+		// Check for cycles
+		if (PulseGraph.Visited[id]==0) {
+
+			// Add the node to the path
+			path.add(id);			
+
+			// Update the visit indicator
+			PulseGraph.Visited[id]=1;
+
+			// Pulse all the head nodes for the outgoing arcs only if getting to this node passes all the tests
+
+			for (int i = 0; i < magicIndex.size(); i++) {
+
+				// Update distance and time
+				int e = (Integer) magicIndex.get(i); //Arc index
+				int a = Fitter.Arcs[e][1];			// Head Node
+				int newCost = (pCost + Fitter.Distance[e]);// New cost
+				double newMean = pMean + Fitter.Mean[e];// New mean
+				
+				
+				
+				
+				double[] newData=Fitter.sum(pData, Fitter.Data[e]);							
+				ContPhaseVar newtRV=newPHVar( ptRV, path,e,newData);								
+				
+				double newTmin=ptmin +Fitter.MinTime[e];// New free flow time					
+				double newProb=0;
+				
+//				System.out.println("Las means son: "+newMean+"\t"+(newtRV.expectedValue())+" - "+Fitter.mean(newData));
+				//Bound pruning
+				if ((newCost + PulseGraph.vertexes[a].getMinDist() < PulseGraph.PrimalBound) ){
+					newProb=calcProb(newtRV,newTmin,a);
+					//Dominance pruning
+					if(!PulseGraph.vertexes[a].CheckLabels(newCost,newProb,path,a) ) {
+						//Infeasibility pruning
+						if (checkInfeasibility(newProb,path)) {
+							//If not pruned the pulse travels to the next head node
+							if ((System.nanoTime()-PulseGraph.pulse_time)/1000000000<PulseGraph.pulseTimeLimit){								
+								PulseGraph.vertexes[a].pulse(newCost,newtRV, newProb,newTmin,newMean,path,newData);
+							}
+						}else {
+							//System.out.println("Pode por dominancia");
+							PulseGraph.Infeasibility+=1;
+						}
+
+					}else {
+						//System.out.println("Pode por dominancia");
+						PulseGraph.Dominance+=1;
+					}
+				}else {
+					//System.out.println("Pode por cota");
+					PulseGraph.Bound+=1;
+				}
+			}
+			//Updates path and visit indicator for backtrack
+			//System.out.println(path);
+			path.remove((path.size() - 1));
+			PulseGraph.Visited[id]=0;
+		}				
+	}
+
+
+
+	public static ContPhaseVar newPHVar(ContPhaseVar pPH,ArrayList<Integer> pPath,int arc,double [] pData) {
+
+
+		if (pPath.size()%PulseGraph.refit==0) {	
+			pPath.add(Fitter.Arcs[arc][1]);
+			ContPhaseVar ph=Fitter.fitPath(pPath);
+//			System.out.println("El pat es: "+pPath);
+//			EMHyperErlangFit EMfit = new EMHyperErlangFit(pData);
+//			ContPhaseVar v1=EMfit.fit(Fitter.N_Phase);
+//			ContPhaseVar ph=new DenseContPhaseVar(v1.getVectorArray(),v1.getMatrixArray());
+//			System.out.println("Pase por aca!!");
+			pPath.remove(pPath.size()-1);
+			return ph; 
+
+		} else {
+			System.out.println("Pase por aca...");
+			return pPH.sum(Fitter.TimeRV[arc]);// New time random variable.
+		}
+
+	}
+
+
 	/**
 	 * Computes the probability of arriving on time to node pHeadNode
 	 * @param pTimeRV
@@ -567,19 +672,17 @@ public class VertexPulse {
 	 */
 	public static double calcProb(ContPhaseVar pTimeRV ,Double pTMin,int pHeadNode) {
 		double prob=0;
-		
+		//System.out.println("Esre es el T con el que calculo: "+(PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime())+"\t\t\n"+(PulseGraph.TimeC)+"\t"+(pTMin)+"\t"+(PulseGraph.vertexes[pHeadNode].getMinTime()));
 		try {
-			prob=pTimeRV.cdf(Math.max(0,PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime())); //Coputes the probability of arriving on time to this node
+			prob=pTimeRV.cdf(Math.max(0,PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime())); //Coputes the probability of arriving on time to this node			
+			//System.out.println(prob);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
-		
-		
 		return prob;
 		//return 0.95;
 	}
-	
+
 	/**
 	 * This method sorts the arcs
 	 * @param set

@@ -5,6 +5,7 @@ This file creates the insatnces for the given city
 import os,sys,networkx as nx,random as rnd, numpy as np,time
 sys.path.append(os.path.abspath(f'../../SaRP_Pulse_Python/src'))
 from pulse import *
+from Fitter import *
 
 global city,DG,pairs,tightness,alpha
 cities='SiouxFalss','Chicago-Sketch','GoldCoast','Philadelphia','Sydney'
@@ -58,7 +59,7 @@ def createRandomInst(n,wb='w'):
 		None
 	'''
 	f=open(f'{city}/{city}_instances.txt',wb)
-	f.write(f'{"#"*40}\n#Creatin {n} instances with tightness: {tightness}\n{"#"*40}')
+	f.write(f'{"#"*40}\n#Creatin {n} instances with tightness: {tightness}\n{"#"*40}\n')
 	for i in range(n):
 		s=rnd.choice(list(DG.nodes()))
 		t=createPair(s)
@@ -66,7 +67,7 @@ def createRandomInst(n,wb='w'):
 		f.write(f'{s}\t{t}\t{tMax}\n')
 	f.close()
 
-def calcTMax(s,t,timelimit=200):
+def calcTMax1(s,t,timelimit=200):
 	'''
 	Computes an interesting TMax for the SaRP problem from s to t
 	Args:
@@ -122,7 +123,7 @@ def calcTMax(s,t,timelimit=200):
 	
 	return T_max_star
 
-def calcTMax1(s,t):
+def calcTMax(s,t):
 	'''
 	Computes Time budget using the empirical distribution of the shortest time path
 	Args:
@@ -149,6 +150,11 @@ def alphaQuantile(arcs,a):
 	'''
 	data=readRealizations(arcs)
 	tmin=sum(DG[i][j]['tmin'] for i,j in arcs)
+	#print(list(data))
+	
+	#ph,loglike=get_PH_HE(list(data),10)
+	#print('ph10 da:', ph.cdf(np.quantile(data,a)),f'\nT es: {tmin+np.quantile(data,a)}')
+
 	return tmin+np.quantile(data,a)
 
 def readRealizations(arcs):
@@ -157,20 +163,23 @@ def readRealizations(arcs):
 	Args:
 		arcs(list): list of arcs to query
 	Return:
-		Data(dict): dictionary with the queried data
+		data(np.array: sum of the arc travel times
 	'''
 	f=open(f'{city}/Scenarios/scenTotal.txt')
 	def readLine(l):
 		l=l.replace('\n','').split('\t')
 		i,j=tuple(map(int,l[:2]))
 		data=list(map(float,l[-1].replace('[','').replace(']','').split(', ')))
-		return i,j,data
-	Data={}
+		return i,j,np.array(data)
+	
+	i,j,data=readLine(f.readline())	
+	data-=data
+
 	for l in f:
-		i,j,data=readLine(l)
+		i,j,datai=readLine(l)
 		if (i,j) in arcs:
-			Data[i,j]=np.array(data)
-	data=sum(Data.values())
+			data+=datai
+	
 	return data
 
 def eval_path(path1,pT_max):
@@ -199,10 +208,16 @@ def eval_path(path1,pT_max):
 			print("El tmin calculado es ",tmin)
 			#plt.show()
 			plt.clf()
-		print("El tmin calculado es ",tmin)
+		
 		if len(pat)==0:
 			prob=0
-		return prob
+		
+		ph,loglike=get_PH_HE(list(data),5)
+		print('El tmin es: ',tmin)
+		print('ph10 da:', ph.cdf(pT_max-tmin))		
+		#print('El valE es: ',ph.T)
+		print('El valE es: ',np.mean(data))
+		return prob		
 	else:
 		return 0
 	
@@ -219,14 +234,14 @@ if __name__ == '__main__':
 	alpha=0.8
 	########################################################
 	
-	#createRandomInst(n=30,wb='w')
+	createRandomInst(n=5,wb='w')
 
 
-	p=[866, 867, 868, 819, 818, 828, 833, 832, 837, 836, 841, 840, 842, 664, 447, 663, 668, 667, 518]
-	p=[i+1 for i in p]
-	tmax=calcTMax1(s=p[0],t=p[-1])
-	print(tmax)
-	print(eval_path(p,tmax))
+	# p=[142,688]#, 698, 700, 812, 471, 470, 469, 468, 467, 457, 466, 465, 861, 888, 894, 348]
+	# p=[i+1 for i in p]
+	# tmax=calcTMax(s=p[0],t=p[-1])
+	# print('Este es el T',tmax)
+	# print('Con data es: ',eval_path(p,tmax))
 
 	
 	

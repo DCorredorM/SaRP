@@ -13,8 +13,8 @@ def runExperiment():
 	'''
 	folder=os.path.abspath(f'../../data/Networks/{city}')
 	d=os.popen(f'java -jar PH_Pulse_SaRP.jar {folder} {city}')
-	d=d.read().replace('\n','').split('\t')	
-
+	d=d.read().replace('\n','').replace('pk menor que Double.MIN_VALUE','').split('\t')	
+	return d
 
 def runInstances(nPhases,nScen,alpha,clearF=True):
 	'''
@@ -30,7 +30,7 @@ def runInstances(nPhases,nScen,alpha,clearF=True):
 	folder=os.path.abspath(f'../../data/Networks/{city}')
 	inst=open(f'{folder}/{city}_instances.txt','r')
 
-	gamma=0.9
+	gamma=1
 
 	scen=list(range(1,nScen+1))+['Total']
 	nn=0
@@ -40,10 +40,12 @@ def runInstances(nPhases,nScen,alpha,clearF=True):
 			for k in scen[::-1]:
 				config=open(f'{folder}/{city}_config.txt','w')
 				print(i)
-				text=f'DataFile:Scenarios/PHFit{nPhases}_scen{k}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{float(i[2])*gamma}\nStart Node:{i[0]}\nEnd Node:{i[1]}\nNumber of Phases:{nPhases}\nalpha:{alpha}\nTime Limit:{timeLimit}'
-				config.write(text)
+				text=f'DataFile:Scenarios/PHFit{nPhases}_scen{k}.txt\nDataFile:Scenarios/scen{k}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{float(i[2])*gamma}\nStart Node:{i[0]}\nEnd Node:{i[1]}\nNumber of Phases:{nPhases}\nalpha:{alpha}\nTime Limit:{timeLimit}'
+				config.write(text)				
 				config.close()
-				runExperiment()
+				d=runExperiment()
+				print(d)
+
 			nn+=1
 			if nn>=1000:
 				break
@@ -62,19 +64,13 @@ def clearResultFiles():
 	else:
 		os.popen(f'del {folder}')
 
-
-
-
-
-
-
 if __name__ == '__main__':
 	city='Chicago-Sketch'
 	timeLimit=5000
 	#runInstances(3,5,0.8)
 	#print(os.name)
 	
-	runInstances(nPhases=10,nScen=5,alpha=0.8)
+	#runInstances(nPhases=10,nScen=5,alpha=0.8)
 	runInstances(nPhases=5,nScen=5,alpha=0.8)
-	runInstances(nPhases=3,nScen=5,alpha=0.8)
+	#runInstances(nPhases=3,nScen=5,alpha=0.8)
 
