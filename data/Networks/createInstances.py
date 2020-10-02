@@ -137,7 +137,7 @@ def calcTMax(s,t):
 	
 	TspT=alphaQuantile(list(zip(spT[:-1],spT[1:])),alpha)
 	TspC=alphaQuantile(list(zip(spC[:-1],spC[1:])),alpha)	
-	return TspT+(TspC-TspT)*(1-tightness)
+	return TspT+(TspC-TspT)*tightness
 
 def alphaQuantile(arcs,a):
 	'''
@@ -229,14 +229,14 @@ if __name__ == '__main__':
 	'''
 	city=cities[1]
 	creates_graphs()
-	tightness=0.80
-	inf_tightness=0.85
+	tightness=0.6
+	#inf_tightness=0.85
 	alpha=0.8
 	########################################################
+	rnd.seed(1)
+	createRandomInst(n=40,wb='a')
+
 	
-	createRandomInst(n=20,wb='w')
-
-
 	# p=[142,688]#, 698, 700, 812, 471, 470, 469, 468, 467, 457, 466, 465, 861, 888, 894, 348]
 	# p=[i+1 for i in p]
 	# tmax=calcTMax(s=p[0],t=p[-1])
