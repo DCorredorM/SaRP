@@ -105,7 +105,7 @@ if __name__ == '__main__':
 	city='Chicago-Sketch'
 	nScens=5
 	nInstances=40
-	nPhases=3
+	nPhases=5
 	
 	
 	analyze(nPhases)
