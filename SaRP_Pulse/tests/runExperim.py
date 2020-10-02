@@ -37,7 +37,7 @@ def runInstances(nPhases,nScen,alpha,clearF=True):
 	for l in inst:
 		if l[0]!='#':
 			i=l.replace('\n','').split('\t')
-			for k in scen[::-1]:
+			for k in scen:
 				config=open(f'{folder}/{city}_config.txt','w')
 				print(i)
 				text=f'DataFile:Scenarios/PHFit{nPhases}_scen{k}.txt\nDataFile:Scenarios/scen{k}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{float(i[2])*gamma}\nStart Node:{i[0]}\nEnd Node:{i[1]}\nNumber of Phases:{nPhases}\nalpha:{alpha}\nTime Limit:{timeLimit}'
@@ -70,7 +70,7 @@ if __name__ == '__main__':
 	#runInstances(3,5,0.8)
 	#print(os.name)
 	
-	#runInstances(nPhases=10,nScen=5,alpha=0.8)
-	runInstances(nPhases=5,nScen=5,alpha=0.8)
+	runInstances(nPhases=10,nScen=5,alpha=0.8)
+	#runInstances(nPhases=5,nScen=5,alpha=0.8)
 	#runInstances(nPhases=3,nScen=5,alpha=0.8)
 
