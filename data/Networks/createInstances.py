@@ -137,7 +137,7 @@ def calcTMax(s,t):
 	
 	TspT=alphaQuantile(list(zip(spT[:-1],spT[1:])),alpha)
 	TspC=alphaQuantile(list(zip(spC[:-1],spC[1:])),alpha)	
-	return TspT+(TspC-TspT)*tightness
+	return TspT+(TspC-TspT)*(1-tightness)
 
 def alphaQuantile(arcs,a):
 	'''
@@ -229,7 +229,7 @@ if __name__ == '__main__':
 	'''
 	city=cities[1]
 	creates_graphs()
-	tightness=0.6
+	tightness=0.4
 	#inf_tightness=0.85
 	alpha=0.8
 	########################################################

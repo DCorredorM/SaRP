@@ -70,7 +70,7 @@ if __name__ == '__main__':
 	#runInstances(3,5,0.8)
 	#print(os.name)
 	
-	runInstances(nPhases=10,nScen=5,alpha=0.8)
+	#runInstances(nPhases=10,nScen=5,alpha=0.8)
 	#runInstances(nPhases=5,nScen=5,alpha=0.8)
-	#runInstances(nPhases=3,nScen=5,alpha=0.8)
+	runInstances(nPhases=3,nScen=5,alpha=0.8)
 
