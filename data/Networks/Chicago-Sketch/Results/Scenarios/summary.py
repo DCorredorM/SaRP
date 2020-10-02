@@ -22,8 +22,6 @@ def openWb(name):
 		wb=xl.Workbook()
 		wb.save(f'{name}.xlsx')
 		
-
-
 def modSheet(pSheet):
 	'''
 	ROUTINE:
@@ -65,7 +63,7 @@ def analyze(nPhases):
 	
 	
 	scens=list(range(1,nScens+1))+['Total']
-	files={s:open(f'PHFit{nPhases}_scen{s}.txt') for s in scens}
+	files={s:open(f'PHFit{nPhases}/PHFit{nPhases}_scen{s}.txt') for s in scens}
 
 	insts=readInstances()
 	r=3
@@ -106,8 +104,8 @@ def readInstances():
 if __name__ == '__main__':
 	city='Chicago-Sketch'
 	nScens=5
-	nInstances=20
-	nPhases=10
+	nInstances=40
+	nPhases=3
 	
 	
 	analyze(nPhases)
