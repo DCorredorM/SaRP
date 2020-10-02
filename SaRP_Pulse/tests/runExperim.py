@@ -12,7 +12,7 @@ def runExperiment():
 			source+"\t"+target+"\t"+ running time (s)+"\t"+PrimalBound+"\t"+Free flow time+"\t"+ reliability+"\t"+Bound+"\t"+Infeasibility+"\t"+Dominance+"\t"+finalPath
 	'''
 	folder=os.path.abspath(f'../../data/Networks/{city}')
-	d=os.popen(f'java -jar PH_Pulse_SaRP.jar {folder} {city}')
+	d=os.popen(f'java -Xmx1024m -jar PH_Pulse_SaRP.jar {folder} {city}')
 	d=d.read().replace('\n','').replace('pk menor que Double.MIN_VALUE','').split('\t')	
 	return d
 
