@@ -1,12 +1,11 @@
 import scipy.stats as st
 import numpy as np
 import networkx as  nx
-import os
-import math
-import sys
+import os,math,sys
+
 from Fitter import *
 
-
+global CV #CV (float):	Coefficient of variation
 
 def read(instance):	
 	os.chdir(r'C:\Users\David Corredor M\Desktop\Thesis\3. Case_study\Chicago\TransportationNetworks-master\Chicago-Sketch')
@@ -211,18 +210,39 @@ def createSceanrios(nScen,n,net='Chicago-Sketch'):
 		delta=(t-fft)/(1.5*(nScen-1)/2)
 		TData=[]
 		for k in range(int(-(nScen-1)/2),int((nScen-1)/2+1)):
-			data=createData(mu=t+k*delta,CV=0.3,fft=fft,n=n)
+			data=createData(mu=t+k*delta,fft=fft,n=n)
 			files[k+int((nScen-1)/2)].write(f'{i}\t{j}\t{data}\n')
 			TData+=data
 		files[-1].write(f'{i}\t{j}\t{TData}\n')		
 	for f in files: f.close()
 
-def createData(mu,CV,fft,n):
+def createDataIndependent(n,net='Chicago-Sketch'):
+	'''
+	Creates the data files for the given network
+	Args:
+		n(int): Number of observations per . Nothe that the agregated dataset has lenght of nScen*n for each arc.
+		net(String): Folder name
+
+	Returns:
+		None: creates for each scenario a file with the data, and a file for the aggregated data. These files are saved in '../../data/Networks/{net}/Scenarios/'.
+
+	'''
+	file=open(f'../../data/Networks/{net}/Independent/data_cv{CV}.txt','w') 
+	arcs=loadNet(net=net)
+	for i,j in arcs.keys():
+		c,t,fft,sigma=arcs[i,j]
+		
+		data=createData(mu=t,fft=fft,n=n)
+		file.write(f'{i}\t{j}\t{data}\n')
+		
+	file.close()
+
+def createData(mu,fft,n):
 	'''
 	Given the expected value, and a CV, a dataset with n realizations of a lognormal variable with Expected value mu and with variance s=CV*mu
 	Args:
 		mu (float): Expected value
-		CV (float):	Coefficient of variation
+		
 		fft (float): Free flow time 
 		n (int): size of the dataset
 	Returns
@@ -241,7 +261,7 @@ def createData(mu,CV,fft,n):
 
 	return data
 
-def fitPH(nScen,nPhases,net='Chicago-Sketch'):
+def fitPHScenarios(nScen,nPhases,net='Chicago-Sketch'):
 	'''
 	fits a PH random variable to each scenario created
 	Args:
@@ -269,13 +289,45 @@ def fitPH(nScen,nPhases,net='Chicago-Sketch'):
 		print(n/N)
 	for fin,fout in zip(files,filesOut): (fin.close(),fout.close())
 
+def fitIndependent(nScen,nPhases,net='Chicago-Sketch'):
+	'''
+	Fits a PH distribution and arbitrari distribution to each arc in the network.
+
+	Args:	
+		nPhases(list): list of number of phases to fit
+		net(String): Folder name
+
+	Returns:
+		None: Creates a file with the aggregated data. These files are saved in '../../data/Networks/{net}/Independent/'. 
+	'''
+	files=[open(f'../../data/Networks/{net}/Independent/scen{k+1}.txt','r') for k in range(nScen)]
+	filesOut=[open(f'../../data/Networks/{net}/Independent/PHFit{nPhases}_scen{k+1}.txt','w') for k in range(nScen)]
+	arcs=loadNet(net=net)
+	N=len(arcs.keys())
+	n=0
+	for i,j in arcs.keys():
+		n+=1
+		for fin,fout in zip(files,filesOut):
+			l=fin.readline()			
+			ii,jj,data=l.replace('\n','').split('\t')
+			data=list(map(float,data.replace('[','').replace(']','').split(', ')))
+			
+			ph,loglike=get_PH_HE(data,nPhases)			
+			fout.write(f'{i}\t{j}\t{arcs[i,j][0]}\t{arcs[i,j][2]}\t{[list(map(lambda x: round(float(x),10),k))[0]for k in ph.alpha.tolist()]}\t{[list(map(lambda x: round(float(x),10),k))for k in ph.T.tolist()]}\n')
+		print(n/N)
+	for fin,fout in zip(files,filesOut): (fin.close(),fout.close())
+
+
 if __name__ == '__main__':
-	
-	#createSceanrios(nScen=5,n=200,net='Chicago-Sketch')
+	########################################################
+	'''
+	Setting of some global parameters
+	'''
+	CV=0.5 #CV (float):	Coefficient of variation
+	########################################################
 
-	
-
-	fitPH(nScen=5,nPhases=10,net='Chicago-Sketch')
+	createDataIndependent(n=500,net='Chicago-Sketch')
+	#fitPHScenarios(nScen=5,nPhases=10,net='Chicago-Sketch')
 
 
 
