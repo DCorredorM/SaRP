@@ -92,6 +92,7 @@ public class PulseMain {
 
 		String net_file = city_file +"/"+information[0];
 		String net_fileD = city_file +"/"+information[1];
+//		String resultsfile = city_file +"/"+information[10];
 		//Choose pulse direction: 1: Forward -  2: Backward
 
 		int direction = 1;
@@ -193,20 +194,19 @@ public class PulseMain {
 		finalPath = network.Path;
 
 		String text =source+"\t"+target+"\t"+ finalTime+"\t"+network.PrimalBound+"\t"+network.minTime+"\t"+ network.finalProb+"\t"+network.Bound+"\t"+network.Infeasibility+"\t"+network.Dominance+"\t"+finalPath;
-		System.out.println(text);
-		String results_path=city_file+"/Results/"+information[0];
+		System.out.println(text);		
 
 //		System.out.println(results_path);
-		try(FileWriter fw = new FileWriter(results_path, true);
-				BufferedWriter bw = new BufferedWriter(fw);
-				PrintWriter out = new PrintWriter(bw))
-		{
-			out.println(text);
-			//more code
-
-		} catch (IOException e) {
-			//exception handling left as an exercise for the reader
-		}
+//		try(FileWriter fw = new FileWriter(resultsfile, true);
+//				BufferedWriter bw = new BufferedWriter(fw);
+//				PrintWriter out = new PrintWriter(bw))
+//		{
+//			out.println(text);
+//			//more code
+//
+//		} catch (IOException e) {
+//			//exception handling left as an exercise for the reader
+//		}
 
 	}
 

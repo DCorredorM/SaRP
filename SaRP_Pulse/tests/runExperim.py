@@ -2,6 +2,8 @@ import os
 
 global city,timeLimit
 
+def createFolder(name):
+	os.popen(f'[ -d {name} ]  || mkdir {name}')
 def runExperiment():
 	'''
 	Clas the java pulse for the config file located at f'../../data/Networks/{city}'
@@ -13,10 +15,10 @@ def runExperiment():
 	'''
 	folder=os.path.abspath(f'../../data/Networks/{city}')
 	d=os.popen(f'java -Xmx1024m -jar PH_Pulse_SaRP.jar {folder} {city}')
-	d=d.read().replace('\n','').replace('pk menor que Double.MIN_VALUE','').split('\t')	
+	d=d.read().replace('\n','').replace('pk menor que Double.MIN_VALUE','')#.split('\t')	
 	return d
 
-def runInstances(nPhases,nScen,alpha,clearF=True):
+def runInstancesScenarios(nPhases,nScen,alpha,clearF=True):
 	'''
 	Runs all the insances for the given city
 	Args:
@@ -28,11 +30,11 @@ def runInstances(nPhases,nScen,alpha,clearF=True):
 	if clearF: clearResultFiles()
 	
 	folder=os.path.abspath(f'../../data/Networks/{city}')
-	inst=open(f'{folder}/{city}_instances.txt','r')
-
-	gamma=1
-
-	scen=list(range(1,nScen+1))+['Total']
+	inst=open(f'{folder}/{city}_instances_{tightness}.txt','r')	
+	
+	createFolder(name=f'{folder}/Results/Scenarios/PHFit{nPhases}_{tightness}')
+	
+	scen=list(range(1,nScen+1))#+['Total']
 	nn=0
 	for l in inst:
 		if l[0]!='#':
@@ -40,11 +42,14 @@ def runInstances(nPhases,nScen,alpha,clearF=True):
 			for k in scen:
 				config=open(f'{folder}/{city}_config.txt','w')
 				print(i)
-				text=f'DataFile:Scenarios/PHFit{nPhases}_scen{k}.txt\nDataFile:Scenarios/scen{k}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{float(i[2])*gamma}\nStart Node:{i[0]}\nEnd Node:{i[1]}\nNumber of Phases:{nPhases}\nalpha:{alpha}\nTime Limit:{timeLimit}'
+				text=f'PHFitFile:Scenarios/PHFit{nPhases}_scen{k}.txt\nDataFile:Scenarios/scen{k}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{float(i[2])}\nStart Node:{i[0]}\nEnd Node:{i[1]}\nNumber of Phases:{nPhases}\nalpha:{alpha}\nTime Limit:{timeLimit}'
 				config.write(text)				
 				config.close()
 				d=runExperiment()
+				resultFile=open(f'{folder}/Results/Scenarios/PHFit{nPhases}_{tightness}/scen{k}.txt','a')
 				print(d)
+				resultFile.write(d)
+				resultFile.close()
 
 			nn+=1
 			if nn>=1000:
@@ -64,13 +69,21 @@ def clearResultFiles():
 	else:
 		os.popen(f'del {folder}')
 
+
 if __name__ == '__main__':
+	########################################################
+	'''
+	Run scenario instances.
+
+	Setting of some global parameters
+	'''
 	city='Chicago-Sketch'
-	timeLimit=5000
-	#runInstances(3,5,0.8)
-	#print(os.name)
-	
-	#runInstances(nPhases=10,nScen=5,alpha=0.8)
-	runInstances(nPhases=5,nScen=5,alpha=0.8)
-	#runInstances(nPhases=3,nScen=5,alpha=0.8)
+	timeLimit=5000	
+	tightness=0.4
+	nPhases=3
+	########################################################		
+
+	#runInstancesScenarios(nPhases=10,nScen=5,alpha=0.8)
+	runInstancesScenarios(nPhases=5,nScen=1,alpha=0.8)
+	#runInstancesScenarios(nPhases=3,nScen=5,alpha=0.8)
 
