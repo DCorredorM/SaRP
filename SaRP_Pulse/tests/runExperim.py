@@ -3,7 +3,12 @@ import os
 global city,timeLimit
 
 def createFolder(name):
-	os.popen(f'[ -d {name} ]  || mkdir {name}')
+	
+	if os.name=='posix':
+		os.popen(f'[ -d {name} ]  || mkdir {name}')
+	else:
+		name=name.replace('/','\\')
+		os.popen(f'md {name}')
 def runExperiment():
 	'''
 	Clas the java pulse for the config file located at f'../../data/Networks/{city}'
@@ -80,10 +85,9 @@ if __name__ == '__main__':
 	city='Chicago-Sketch'
 	timeLimit=5000	
 	tightness=0.4
-	nPhases=3
 	########################################################		
 
 	#runInstancesScenarios(nPhases=10,nScen=5,alpha=0.8)
-	runInstancesScenarios(nPhases=5,nScen=1,alpha=0.8)
-	#runInstancesScenarios(nPhases=3,nScen=5,alpha=0.8)
+	#runInstancesScenarios(nPhases=5,nScen=5,alpha=0.8)
+	runInstancesScenarios(nPhases=3,nScen=5,alpha=0.8)
 
