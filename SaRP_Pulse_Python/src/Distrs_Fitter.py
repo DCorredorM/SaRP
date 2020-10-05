@@ -1,7 +1,7 @@
 import scipy.stats as st
 import numpy as np
 import networkx as  nx
-import os,math,sys
+import os,math,sys,time
 
 from Fitter import *
 
@@ -289,7 +289,7 @@ def fitPHScenarios(nScen,nPhases,net='Chicago-Sketch'):
 		print(n/N)
 	for fin,fout in zip(files,filesOut): (fin.close(),fout.close())
 
-def fitIndependent(nScen,nPhases,net='Chicago-Sketch'):
+def fitIndependent(nPhases,net='Chicago-Sketch'):
 	'''
 	Fits a PH distribution and arbitrari distribution to each arc in the network.
 
@@ -300,22 +300,44 @@ def fitIndependent(nScen,nPhases,net='Chicago-Sketch'):
 	Returns:
 		None: Creates a file with the aggregated data. These files are saved in '../../data/Networks/{net}/Independent/'. 
 	'''
-	files=[open(f'../../data/Networks/{net}/Independent/scen{k+1}.txt','r') for k in range(nScen)]
-	filesOut=[open(f'../../data/Networks/{net}/Independent/PHFit{nPhases}_scen{k+1}.txt','w') for k in range(nScen)]
+	file=open(f'../../data/Networks/{net}/Independent/data_cv{CV}.txt','r')
+	fileOut=[open(f'../../data/Networks/{net}/Independent/PHFit{np}_cv{CV}.txt','w')for np in nPhases]+[open(f'../../data/Networks/{net}/Independent/DistrFit_cv{CV}.txt','w')]
 	arcs=loadNet(net=net)
 	N=len(arcs.keys())
 	n=0
+
+	fittingTimes={np:0 for np in nPhases} #Total fitting times
+	fittingTimes['distr']=0
+
 	for i,j in arcs.keys():
-		n+=1
-		for fin,fout in zip(files,filesOut):
-			l=fin.readline()			
-			ii,jj,data=l.replace('\n','').split('\t')
-			data=list(map(float,data.replace('[','').replace(']','').split(', ')))
-			
-			ph,loglike=get_PH_HE(data,nPhases)			
-			fout.write(f'{i}\t{j}\t{arcs[i,j][0]}\t{arcs[i,j][2]}\t{[list(map(lambda x: round(float(x),10),k))[0]for k in ph.alpha.tolist()]}\t{[list(map(lambda x: round(float(x),10),k))for k in ph.T.tolist()]}\n')
+		n+=1		
+		l=file.readline()			
+		ii,jj,data=l.replace('\n','').split('\t')
+		data=list(map(float,data.replace('[','').replace(']','').split(', ')))
+		#fit PHtypes
+		for ii,np in enumerate(nPhases):
+			ph,loglike=get_PH_HE(data,np)
+			tFit=time.time()			
+			fileOut[ii].write(f'{i}\t{j}\t{arcs[i,j][0]}\t{arcs[i,j][2]}\t{[list(map(lambda x: round(float(x),10),k))[0]for k in ph.alpha.tolist()]}\t{[list(map(lambda x: round(float(x),10),k))for k in ph.T.tolist()]}\n')
+			fittingTimes[np]+=time.time()-tFit
+		
+		#fit Distributions		
+		tFit=time.time()			
+		params = fit_to_all_distributions(data,d_names)		
+		best_dist_chi, best_chi, params_chi, dist_results_chi = get_best_distribution_using_chisquared_test(data, params,d_names)
+		fittingTimes['distr']+=time.time()-tFit
+		fileOut[-1].write(f'{i}\t{j}\t{best_dist_chi}\t{params_chi}\n')		
 		print(n/N)
-	for fin,fout in zip(files,filesOut): (fin.close(),fout.close())
+
+	file.close()
+	for f in fileOut: f.close()
+
+	fTimes=open(f'../../data/Networks/Fitting_Times.txt','a')
+	for np in nPhases:
+		fTimes.write(f'PhaseType fit {np}\t{net}\t{fittingTimes[np]}\n')
+
+	fTimes.write(f'Distrubution\t{net}\t{fittingTimes["distr"]}\n')
+	fTimes.close()
 
 
 if __name__ == '__main__':
@@ -324,10 +346,12 @@ if __name__ == '__main__':
 	Setting of some global parameters
 	'''
 	CV=0.5 #CV (float):	Coefficient of variation
+	d_names = ['lognorm','gamma','weibull_min']
 	########################################################
 
-	createDataIndependent(n=500,net='Chicago-Sketch')
-	#fitPHScenarios(nScen=5,nPhases=10,net='Chicago-Sketch')
+	#createDataIndependent(n=500,net='Chicago-Sketch')
+	fitIndependent(nPhases=[3,5],net='Chicago-Sketch')
+
 
 
 
