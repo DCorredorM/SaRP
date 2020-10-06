@@ -7,8 +7,10 @@ sys.path.append(os.path.abspath(f'../../SaRP_Pulse_Python/src'))
 from pulse import *
 from Fitter import *
 
-global city,DG,pairs,tightness,alpha
+global city,DG,pairs,tightness,alpha,SCEN,INDEP,experim
 cities='SiouxFalss','Chicago-Sketch','GoldCoast','Philadelphia','Sydney'
+SCEN='Scenarios'
+INDEP='Independent'
 
 def creates_graphs():
 	'''
@@ -54,17 +56,17 @@ def createRandomInst(n,wb='w'):
 	Creates n random instances for the SaRP
 	Args:
 		n(int): Number of insances to create
-		wb(String): type of the file for printing the instances: 'r' read, 'w' erite...
+		wb(String): type of the file for printing the instances: 'r' read, 'w' write...
 	Return:
 		None
 	'''
-	f=open(f'{city}/{city}_instances_{tightness}.txt',wb)
-	f.write(f'{"#"*40}\n#Creatin {n} instances with tightness: {tightness}\n{"#"*40}\n')
+	f=open(f'{city}/{experim}/Instances/i.txt',wb)
+	f.write(f'{"#"*40}\n#{n} instances for alpha {alpha} and cv {CV}\n{"#"*40}\n')
 	for i in range(n):
 		s=rnd.choice(list(DG.nodes()))
 		t=createPair(s)
-		tMax=calcTMax(s,t)
-		f.write(f'{s}\t{t}\t{tMax}\n')
+		tL,tU=calcTMax(s,t)
+		f.write(f'{s}\t{t}\t{tL}\t{tU}\n')
 	f.close()
 
 def calcTMax1(s,t,timelimit=200):
@@ -137,7 +139,7 @@ def calcTMax(s,t):
 	
 	TspT=alphaQuantile(list(zip(spT[:-1],spT[1:])),alpha)
 	TspC=alphaQuantile(list(zip(spC[:-1],spC[1:])),alpha)	
-	return TspT+(TspC-TspT)*(1-tightness)
+	return TspT, TspC
 
 def alphaQuantile(arcs,a):
 	'''
@@ -165,7 +167,11 @@ def readRealizations(arcs):
 	Return:
 		data(np.array: sum of the arc travel times
 	'''
-	f=open(f'{city}/Scenarios/scenTotal.txt')
+	if experim==SCEN:
+		f=open(f'{city}/{experim}/scenTotal.txt')
+	else:
+		f=open(f'{city}/{experim}/CV{CV}/data_cv{CV}.txt')
+
 	def readLine(l):
 		l=l.replace('\n','').split('\t')
 		i,j=tuple(map(int,l[:2]))
@@ -227,14 +233,14 @@ if __name__ == '__main__':
 	Setting of some global parameters
 	'''
 	city=cities[1]
-	creates_graphs()
-	tightness=0.8
-	#inf_tightness=0.85
+	creates_graphs()	
 	alpha=0.8
+	CV=0.5
+	experim=INDEP #If creating instances for Independen experiments or Scenario experiments
 	########################################################
 	
 	rnd.seed(1)
-	createRandomInst(n=40,wb='a')
+	createRandomInst(n=40,wb='w')
 
 	
 	# p=[142,688]#, 698, 700, 812, 471, 470, 469, 468, 467, 457, 466, 465, 861, 888, 894, 348]

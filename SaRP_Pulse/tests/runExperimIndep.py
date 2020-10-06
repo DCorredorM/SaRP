@@ -32,7 +32,7 @@ def creates_graphs():
 	##########################
 	#Creates graph with distrs
 	SG=DG.copy()
-	file1 = open(f'{folder}/{city}_fitts.txt','r')
+	file1 = open(f'{folder}/Independent/CV{CV}/DistrFit_cv{CV}.txt','r')
 	
 	for x in file1:
 		x=x[:-1].split('\t')
@@ -171,32 +171,40 @@ def runInstancesIndependent(nPhases,clearF=True):
 	#if clearF: clearResultFiles()
 	
 	folder=os.path.abspath(f'../../data/Networks/{city}')
-	inst=open(f'{folder}/{city}_instances_{tightness}.txt','r')	
 	
-	createFolder(name=f'{folder}/Results/Independent/CV{CV}_tight{tightness}')
+	
+	inst=open(f'{folder}/Independent/Instances/i.txt')
+	#inst=open(f'{folder}/{city}_instances_{tightness}.txt','r')	
+	results=f'../../results/{city}/Independent/alpha{alpha}_CV{CV}_tight{tightness}'
+	createFolder(name=results)
 		
 	nn=0
+	wb='w'
 	for l in inst:
 		if l[0]!='#':
 			i=l.replace('\n','').split('\t')
 			print(i)
 			#Solve SaRP with ph
-			s,t,T=i[0],i[1],float(i[2])
+			s,t,tL,tU=int(i[0]),int(i[1]),float(i[2]),float(i[3])
+			T=tL+(tU-tL)*(1-tightness)
 			for np in nPhases:
 				config=open(f'{folder}/{city}_config.txt','w')				
-				text=f'PHFitFile:Independent/CV{CV}/PHFit{np}_cv{CV}.txt\nDataFile:Independent/CV{CV}/data_cv{CV}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{float(i[2])}\nStart Node:{i[0]}\nEnd Node:{i[1]}\nNumber of Phases:{np}\nalpha:{alpha}\nTime Limit:{timeLimit}'
+				text=f'PHFitFile:Independent/CV{CV}/PHFit{np}_cv{CV}.txt\nDataFile:Independent/CV{CV}/data_cv{CV}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{T}\nStart Node:{s}\nEnd Node:{t}\nNumber of Phases:{np}\nalpha:{alpha}\nTime Limit:{timeLimit}'
 				config.write(text)				
 				config.close()
 				d=runExperiment()
 				#Evals path
 				info=d.split('\t')
-				path=list(map(lambda x: int(x)+1 ,info[-1].replace('[','').replace(']','').split(', ')))
-				probPost=evalPath(path,nSim=n_it*10,pTMax=T)
+				if info[-1]!='[]':
+					path=list(map(lambda x: int(x)+1 ,info[-1].replace('[','').replace(']','').split(', ')))
+					probPost=evalPath(path,nSim=n_it*10,pTMax=T)
+				else:
+					probPost=0
 				
 				t_pulse,pulse_cost,pulse_sol_time,probAnte,bound, infeas,dom,pulse_path=info[2:]
 				d=f'{s}\t{t}\t{t_pulse}\t{pulse_cost}\t{pulse_sol_time}\t{probAnte}\t{probPost}\t{bound}\t{infeas}\t{dom}\t{pulse_path}\n'
 				
-				resultFile=open(f'{folder}/Results/Independent/CV{CV}_tight{tightness}/PHFit{np}.txt','a')				
+				resultFile=open(f'{results}/PHFit{np}.txt',wb)				
 				resultFile.write(d)
 				print(f'PH{np}\t{d}')
 				resultFile.close()
@@ -205,16 +213,17 @@ def runInstancesIndependent(nPhases,clearF=True):
 			#Solve CSP
 			t_pulse,pulse_cost,pulse_sol_time,prob,bound, infeas,dom,pulse_path=solveCSP(s,t,T)
 			d=f'{s}\t{t}\t{t_pulse}\t{pulse_cost}\t{pulse_sol_time}\t{prob}\t{prob}\t{bound}\t{infeas}\t{dom}\t{pulse_path}\n'
-			resultFile=open(f'{folder}/Results/Independent/CV{CV}_tight{tightness}/CSP.txt','a')
+			resultFile=open(f'{results}/CSP.txt',wb)
 			print(f'Pulse\t{d}')
 			resultFile.write(d)
 			
 			#Solve SaRP with MC
-			t_pulse,pulse_cost,pulse_sol_time,probAnte,probPost,bound, infeas,dom,pulse_path=solveSaRPMC(s,t,T)
-			d=f'{s}\t{t}\t{t_pulse}\t{pulse_cost}\t{pulse_sol_time}\t{probAnte}\t{probPost}\t{bound}\t{infeas}\t{dom}\t{pulse_path}\n'
-			resultFile=open(f'{folder}/Results/Independent/CV{CV}_tight{tightness}/MC_Pulse.txt','a')
-			print(f'PulseMC\t{d}')
-			resultFile.write(d)
+			# t_pulse,pulse_cost,pulse_sol_time,probAnte,probPost,bound, infeas,dom,pulse_path=solveSaRPMC(s,t,T)
+			# d=f'{s}\t{t}\t{t_pulse}\t{pulse_cost}\t{pulse_sol_time}\t{probAnte}\t{probPost}\t{bound}\t{infeas}\t{dom}\t{pulse_path}\n'
+			# resultFile=open(f'{results}/MC_Pulse.txt',wb)
+			# print(f'PulseMC\t{d}')
+			# resultFile.write(d)
+			wb='a'
 
 
 			nn+=1
@@ -245,10 +254,10 @@ if __name__ == '__main__':
 	'''
 	city='Chicago-Sketch'	
 	timeLimit=5000	
-	tightness=0.4
-	nPhases=3
-	CV=0.5
-	alpha=0.8
+	tightness=0.8
+	#nPhases=3
+	CV=0.8
+	alpha=0.9
 	n_it=500	#Number of realizations for Montecarlo
 	creates_graphs()
 	########################################################		
