@@ -220,7 +220,6 @@ def eval_path(path1,pT_max):
 		return prob		
 	else:
 		return 0
-	
 
 if __name__ == '__main__':
 	########################################################

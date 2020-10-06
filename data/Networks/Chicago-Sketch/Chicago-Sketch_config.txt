@@ -1,10 +1,10 @@
-PHFitFile:Scenarios/PHFit3_scen5.txt
-DataFile:Scenarios/scen5.txt
+PHFitFile:Independent/CV0.5/PHFit5_cv0.5.txt
+DataFile:Independent/CV0.5/data_cv0.5.txt
 Number of Arcs:2950
 Number of Nodes:933
-Time Constraint:5924.324965821412
-Start Node:98
-End Node:914
-Number of Phases:3
+Time Constraint:8113.700264008903
+Start Node:33
+End Node:781
+Number of Phases:5
 alpha:0.8
 Time Limit:5000
