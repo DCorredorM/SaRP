@@ -153,7 +153,7 @@ def runExperiment():
 			source+"\t"+target+"\t"+ running time (s)+"\t"+PrimalBound+"\t"+Free flow time+"\t"+ reliability+"\t"+Bound+"\t"+Infeasibility+"\t"+Dominance+"\t"+finalPath
 	'''
 	folder=os.path.abspath(f'../../data/Networks/{city}')
-	d=os.popen(f'java -Xmx1024m -jar PH_Pulse_SaRP.jar {folder} {city}')
+	d=os.popen(f'java -Xmx2048m -jar PH_Pulse_SaRP.jar {folder} {city}')
 	d=d.read().replace('\n','').replace('pk menor que Double.MIN_VALUE','')#.split('\t')	
 		
 
@@ -179,7 +179,7 @@ def runInstancesIndependent(nPhases,clearF=True):
 	createFolder(name=results)
 		
 	nn=0
-	wb='w'
+	wb='a'
 	for l in inst:
 		if l[0]!='#':
 			i=l.replace('\n','').split('\t')
@@ -195,7 +195,8 @@ def runInstancesIndependent(nPhases,clearF=True):
 				d=runExperiment()
 				#Evals path
 				info=d.split('\t')
-				if info[-1]!='[]':
+				print("info:\n",info,"\naca")
+				if info[-1]!='[]' or info!="['']":
 					path=list(map(lambda x: int(x)+1 ,info[-1].replace('[','').replace(']','').split(', ')))
 					probPost=evalPath(path,nSim=n_it*10,pTMax=T)
 				else:

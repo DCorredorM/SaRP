@@ -444,7 +444,7 @@ public class Fitter {
 		}
 
 		EMHyperErlangFit EMfit = new EMHyperErlangFit(tData);
-		ContPhaseVar ph = EMfit.fit(N_Phase);
+		ContPhaseVar ph =  EMfit.fit(N_Phase);
 		//System.out.println(v1.description());
 		//TimeRV[row2] = new DenseContPhaseVar(v1.getVectorArray(),v1.getMatrixArray());
 
@@ -473,10 +473,28 @@ public class Fitter {
 				}
 			}
 		}
-
+		
 		EMHyperErlangFit EMfit = new EMHyperErlangFit(tData);
-		ContPhaseVar ph = EMfit.fit(N_Phase);
-		return ph;		
+		ContPhaseVar pha =  EMfit.fit(N_Phase);
+		double [] tau=pha.getVectorArray();
+		if (checkSubStochasticVector(tau)) {
+			DenseContPhaseVar ph= new DenseContPhaseVar(tau, pha.getMatrixArray());
+			return ph;
+		}else {								
+			double cumsum=0;
+			for (double p : tau) {
+				cumsum+=p;
+			}
+
+			for (int i = 0; i < tau.length; i++) {
+				tau[i]=tau[i]/cumsum;
+			}
+			DenseContPhaseVar ph= new DenseContPhaseVar(tau, pha.getMatrixArray());
+			return ph;
+		}
+		
+		
+				
 	}
 	
 	public static int getArcId(int i,int j) throws Exception {

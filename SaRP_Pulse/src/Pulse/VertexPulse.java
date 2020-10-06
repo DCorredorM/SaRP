@@ -656,7 +656,7 @@ public class VertexPulse {
 			return ph; 
 
 		} else {
-			System.out.println("Pase por aca...");
+//			System.out.println("Pase por aca...");
 			return pPH.sum(Fitter.TimeRV[arc]);// New time random variable.
 		}
 
@@ -672,8 +672,9 @@ public class VertexPulse {
 	 */
 	public static double calcProb(ContPhaseVar pTimeRV ,Double pTMin,int pHeadNode) {
 		double prob=0;
-		//System.out.println("Esre es el T con el que calculo: "+(PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime())+"\t\t\n"+(PulseGraph.TimeC)+"\t"+(pTMin)+"\t"+(PulseGraph.vertexes[pHeadNode].getMinTime()));
+//		System.out.println("Esre es el T con el que calculo: "+(PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime())+"\t\t\n"+(PulseGraph.TimeC)+"\t"+(pTMin)+"\t"+(PulseGraph.vertexes[pHeadNode].getMinTime()));
 		try {
+//			System.out.println(pTimeRV.toString());
 			prob=pTimeRV.cdf(Math.max(0,PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime())); //Coputes the probability of arriving on time to this node			
 			//System.out.println(prob);
 		} catch (Exception e) {
