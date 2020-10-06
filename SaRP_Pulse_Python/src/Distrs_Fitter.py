@@ -7,6 +7,13 @@ from Fitter import *
 
 global CV #CV (float):	Coefficient of variation
 
+def createFolder(name):	
+	if os.name=='posix':
+		os.popen(f'[ -d {name} ]  || mkdir {name}')
+	else:
+		name=name.replace('/','\\')
+		os.popen(f'md {name}')
+
 def read(instance):	
 	os.chdir(r'C:\Users\David Corredor M\Desktop\Thesis\3. Case_study\Chicago\TransportationNetworks-master\Chicago-Sketch')
 	G=nx.DiGraph()
@@ -227,7 +234,8 @@ def createDataIndependent(n,net='Chicago-Sketch'):
 		None: creates for each scenario a file with the data, and a file for the aggregated data. These files are saved in '../../data/Networks/{net}/Scenarios/'.
 
 	'''
-	file=open(f'../../data/Networks/{net}/Independent/data_cv{CV}.txt','w') 
+	createFolder(name=f'../../data/Networks/{net}/Independent/CV{CV}')
+	file=open(f'../../data/Networks/{net}/Independent/CV{CV}/data_cv{CV}.txt','w') 
 	arcs=loadNet(net=net)
 	for i,j in arcs.keys():
 		c,t,fft,sigma=arcs[i,j]
@@ -300,8 +308,10 @@ def fitIndependent(nPhases,net='Chicago-Sketch'):
 	Returns:
 		None: Creates a file with the aggregated data. These files are saved in '../../data/Networks/{net}/Independent/'. 
 	'''
-	file=open(f'../../data/Networks/{net}/Independent/data_cv{CV}.txt','r')
-	fileOut=[open(f'../../data/Networks/{net}/Independent/PHFit{np}_cv{CV}.txt','w')for np in nPhases]+[open(f'../../data/Networks/{net}/Independent/DistrFit_cv{CV}.txt','w')]
+	createFolder(name=f'../../data/Networks/{net}/Independent/CV{CV}/')
+
+	file=open(f'../../data/Networks/{net}/Independent/CV{CV}/data_cv{CV}.txt','r')
+	fileOut=[open(f'../../data/Networks/{net}/Independent/CV{CV}/PHFit{np}_cv{CV}.txt','w')for np in nPhases]+[open(f'../../data/Networks/{net}/Independent/CV{CV}/DistrFit_cv{CV}.txt','w')]
 	arcs=loadNet(net=net)
 	N=len(arcs.keys())
 	n=0
@@ -349,8 +359,11 @@ if __name__ == '__main__':
 	d_names = ['lognorm','gamma','weibull_min']
 	########################################################
 
-	#createDataIndependent(n=500,net='Chicago-Sketch')
-	#fitIndependent(nPhases=[3,5],net='Chicago-Sketch')
+	
+	for cv in [0.3,0.5,0.8,1]:
+		CV=cv
+		createDataIndependent(n=500,net='Chicago-Sketch')
+		fitIndependent(nPhases=[3,5],net='Chicago-Sketch')
 
 
 

@@ -53,7 +53,7 @@ def runInstancesScenarios(nPhases,nScen,alpha,clearF=True):
 				d=runExperiment()
 				resultFile=open(f'{folder}/Results/Scenarios/PHFit{nPhases}_{tightness}/scen{k}.txt','a')
 				print(d)
-				resultFile.write(d)
+				resultFile.write(d+'\n')
 				resultFile.close()
 
 			nn+=1
