@@ -133,7 +133,7 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 		Bound=0;
 		Infeasibility=0;
 		Dominance=0;
-		refit=1;
+		refit=3;
 
 	}
 
