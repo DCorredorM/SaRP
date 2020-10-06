@@ -2,7 +2,7 @@ import os
 import openpyxl as xl
 
 
-global wb,sheet,city,nScens,nInstances
+global wb,sheet,city,nScens,nInstances,tightness
 
 
 
@@ -57,13 +57,13 @@ def analyze(nPhases):
 	'''
 
 	openWb('summary')
-	cTimes = modSheet(f'compTimes{nPhases}')
-	cost = modSheet(f'objFun{nPhases}')
-	rel = modSheet(f'reliability{nPhases}')
+	cTimes = modSheet(f'compTimes{tightness}')
+	cost = modSheet(f'objFun{tightness}')
+	rel = modSheet(f'reliability{tightness}')
 	
 	
-	scens=list(range(1,nScens+1))+['Total']
-	files={s:open(f'PHFit{nPhases}/PHFit{nPhases}_scen{s}.txt') for s in scens}
+	scens=list(range(1,nScens+1))
+	files={s:open(f'PHFit{nPhases}_{tightness}/scen{s}.txt') for s in scens}
 	laux={s:None for s in scens}
 	insts=readInstances()
 	r=3
@@ -97,7 +97,7 @@ def readInstances():
 	Return:
 		Return(type):description.
 	'''
-	f=open(f'../../Chicago-Sketch_Instances.txt')
+	f=open(f'../../../data/Networks/{city}/Scenarios/Instances/i.txt')
 	insts={}
 	for l in f:
 		if l[0]!='#':
@@ -108,9 +108,15 @@ def readInstances():
 
 
 if __name__ == '__main__':
+	########################################################
+	'''
+	Setting of some global parameters
+	'''
 	city='Chicago-Sketch'
 	nScens=5
 	nInstances=40
-	nPhases=5
-	
-	analyze(nPhases)
+	nPhases=3
+	tightness=0.2
+	########################################################
+	for tightness in [0.2,0.4,0.6,0.8]:
+		analyze(nPhases)

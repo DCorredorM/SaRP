@@ -218,11 +218,11 @@ def runInstancesIndependent(nPhases,clearF=True):
 			resultFile.write(d)
 			
 			#Solve SaRP with MC
-			# t_pulse,pulse_cost,pulse_sol_time,probAnte,probPost,bound, infeas,dom,pulse_path=solveSaRPMC(s,t,T)
-			# d=f'{s}\t{t}\t{t_pulse}\t{pulse_cost}\t{pulse_sol_time}\t{probAnte}\t{probPost}\t{bound}\t{infeas}\t{dom}\t{pulse_path}\n'
-			# resultFile=open(f'{results}/MC_Pulse.txt',wb)
-			# print(f'PulseMC\t{d}')
-			# resultFile.write(d)
+			t_pulse,pulse_cost,pulse_sol_time,probAnte,probPost,bound, infeas,dom,pulse_path=solveSaRPMC(s,t,T)
+			d=f'{s}\t{t}\t{t_pulse}\t{pulse_cost}\t{pulse_sol_time}\t{probAnte}\t{probPost}\t{bound}\t{infeas}\t{dom}\t{pulse_path}\n'
+			resultFile=open(f'{results}/MC_Pulse.txt',wb)
+			print(f'PulseMC\t{d}')
+			resultFile.write(d)
 			wb='a'
 
 
