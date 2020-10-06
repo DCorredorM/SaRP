@@ -89,5 +89,7 @@ if __name__ == '__main__':
 
 	#runInstancesScenarios(nPhases=10,nScen=5,alpha=0.8)
 	#runInstancesScenarios(nPhases=5,nScen=5,alpha=0.8)
-	runInstancesScenarios(nPhases=3,nScen=5,alpha=0.8)
+	for i in [0.2,0.6,0.8]:
+		tightness=i
+		runInstancesScenarios(nPhases=3,nScen=5,alpha=0.8)
 

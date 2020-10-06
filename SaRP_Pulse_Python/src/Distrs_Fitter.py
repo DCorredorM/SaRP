@@ -350,7 +350,7 @@ if __name__ == '__main__':
 	########################################################
 
 	#createDataIndependent(n=500,net='Chicago-Sketch')
-	fitIndependent(nPhases=[3,5],net='Chicago-Sketch')
+	#fitIndependent(nPhases=[3,5],net='Chicago-Sketch')
 
 
 
