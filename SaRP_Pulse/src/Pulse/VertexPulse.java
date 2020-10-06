@@ -673,9 +673,12 @@ public class VertexPulse {
 	public static double calcProb(ContPhaseVar pTimeRV ,Double pTMin,int pHeadNode) {
 		double prob=0;
 //		System.out.println("Esre es el T con el que calculo: "+(PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime())+"\t\t\n"+(PulseGraph.TimeC)+"\t"+(pTMin)+"\t"+(PulseGraph.vertexes[pHeadNode].getMinTime()));
-		try {
-//			System.out.println(pTimeRV.toString());
+		int n=pTimeRV.getNumPhases();
+		System.out.println(pTimeRV.toString()+"\n"+pTimeRV.getMatrix().get(n-1, n-1));
+		try {			
+			if(-1*pTimeRV.getMatrix().get(n-1, n-1)<4000) {
 			prob=pTimeRV.cdf(Math.max(0,PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime())); //Coputes the probability of arriving on time to this node			
+			}
 			//System.out.println(prob);
 		} catch (Exception e) {
 			// TODO: handle exception

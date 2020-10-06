@@ -70,11 +70,11 @@ public class PulseMain {
 				
 		//Reads the file
 		String actLine = null;
-		String [] information = new String [10];
+		String [] information = new String [11];
 		int rowA = 0;
 		int colA = 0;
 
-		while((actLine = bufRedr.readLine()) != null && rowA < 10){	
+		while((actLine = bufRedr.readLine()) != null && rowA < 11){	
 			String [] info1 = actLine.split(":");			
 			information[rowA] = info1[1];
 			//System.out.println(rowA+" "+info1[0]+" "+info1[1]);
@@ -88,6 +88,7 @@ public class PulseMain {
 		int N_Phases=Integer.parseInt(information[7]);
 		double alpha=Double.parseDouble(information[8]);
 		double timeLimit=Double.parseDouble(information[9]);
+		int refit=Integer.parseInt(information[10]);
 
 
 		String net_file = city_file +"/"+information[0];
@@ -138,6 +139,7 @@ public class PulseMain {
 		double prob=0;
 		network.setPrimalBound(MD);
 		network.setFinalProb(0.0);
+		network.refit=refit;
 		//network.TimeStar = network.getVertexByID(dataA.Source-1).getMinTime();
 
 		//Size of Q

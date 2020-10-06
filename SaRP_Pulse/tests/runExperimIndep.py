@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath('../../SaRP_Pulse_Python/src/'))
 from pulse import *
 import s_pulse_MC as MC
 
-global city,timeLimit,CV,PG,SPG, alpha,n_it
+global city,timeLimit,CV,PG,SPG, alpha,n_it,refit
 
 def creates_graphs():
 
@@ -179,7 +179,7 @@ def runInstancesIndependent(nPhases,clearF=True):
 	createFolder(name=results)
 		
 	nn=0
-	wb='a'
+	wb='w'
 	for l in inst:
 		if l[0]!='#':
 			i=l.replace('\n','').split('\t')
@@ -189,14 +189,14 @@ def runInstancesIndependent(nPhases,clearF=True):
 			T=tL+(tU-tL)*(1-tightness)
 			for np in nPhases:
 				config=open(f'{folder}/{city}_config.txt','w')				
-				text=f'PHFitFile:Independent/CV{CV}/PHFit{np}_cv{CV}.txt\nDataFile:Independent/CV{CV}/data_cv{CV}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{T}\nStart Node:{s}\nEnd Node:{t}\nNumber of Phases:{np}\nalpha:{alpha}\nTime Limit:{timeLimit}'
+				text=f'PHFitFile:Independent/CV{CV}/PHFit{np}_cv{CV}.txt\nDataFile:Independent/CV{CV}/data_cv{CV}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{T}\nStart Node:{s}\nEnd Node:{t}\nNumber of Phases:{np}\nalpha:{alpha}\nTime Limit:{timeLimit}\nrefit:{refit}'
 				config.write(text)				
 				config.close()
 				d=runExperiment()
 				#Evals path
 				info=d.split('\t')
-				print("info:\n",info,"\naca")
-				if info[-1]!='[]' or info!="['']":
+				
+				if info[-1]!='[]':
 					path=list(map(lambda x: int(x)+1 ,info[-1].replace('[','').replace(']','').split(', ')))
 					probPost=evalPath(path,nSim=n_it*10,pTMax=T)
 				else:
@@ -260,6 +260,7 @@ if __name__ == '__main__':
 	CV=0.8
 	alpha=0.9
 	n_it=500	#Number of realizations for Montecarlo
+	refit=5
 	creates_graphs()
 	########################################################		
 
