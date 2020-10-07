@@ -138,7 +138,16 @@ def calcTMax(s,t):
 	spC=nx.shortest_path(DG,s,t,'Cost')
 	
 	TspT=alphaQuantile(list(zip(spT[:-1],spT[1:])),alpha)
-	TspC=alphaQuantile(list(zip(spC[:-1],spC[1:])),alpha)	
+	TspC=alphaQuantile(list(zip(spC[:-1],spC[1:])),alpha)
+
+	TMed=TspT+(TspC-TspT)/2
+	PG=pulse_graph(G=DG,T_max=TMed,source=s, target=t,tightness=1)
+	pulse_path,pulse_cost,pulse_sol_time=PG.run_pulse()
+
+	prob=eval_path(pulse_path,TMed)
+	if prob>alpha:
+		TspC=TMed
+	
 	return TspT, TspC
 
 def alphaQuantile(arcs,a):
@@ -179,7 +188,8 @@ def readRealizations(arcs):
 		return i,j,np.array(data)
 	
 	i,j,data=readLine(f.readline())	
-	data-=data
+	if (i,j) not in arcs:
+		data-=data
 
 	for l in f:
 		i,j,datai=readLine(l)
@@ -205,24 +215,16 @@ def eval_path(path1,pT_max):
 		tmin=sum(int(DG[i][j]['tmin']) for i,j in pat)
 		ind=list(map(lambda x: x<=pT_max-tmin,data))
 		
-
 		prob= sum(ind)/len(data)
-		
-		if prob==0 and len(pat)!=0:
-			plt.axvline(x=pT_max-tmin,ymin=0, ymax=1000,color="lime")
-			plt.hist(data)
-			print("El tmin calculado es ",tmin)
-			#plt.show()
-			plt.clf()
 		
 		if len(pat)==0:
 			prob=0
 		
-		ph,loglike=get_PH_HE(list(data),5)
-		print('El tmin es: ',tmin)
-		print('ph10 da:', ph.cdf(pT_max-tmin))		
-		#print('El valE es: ',ph.T)
-		print('El valE es: ',np.mean(data))
+		# ph,loglike=get_PH_HE(list(data),5)
+		# print('El tmin es: ',tmin)
+		# print('ph10 da:', ph.cdf(pT_max-tmin))		
+		# #print('El valE es: ',ph.T)
+		# print('El valE es: ',np.mean(data))
 		return prob		
 	else:
 		return 0
