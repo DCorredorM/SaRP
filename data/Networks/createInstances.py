@@ -140,14 +140,14 @@ def calcTMax(s,t):
 	TspT=alphaQuantile(list(zip(spT[:-1],spT[1:])),alpha)
 	TspC=alphaQuantile(list(zip(spC[:-1],spC[1:])),alpha)
 
-	TMed=TspT+(TspC-TspT)/2
-	PG=pulse_graph(G=DG,T_max=TMed,source=s, target=t,tightness=1)
-	pulse_path,pulse_cost,pulse_sol_time=PG.run_pulse()
+	# TMed=TspT+(TspC-TspT)/2
+	# PG=pulse_graph(G=DG,T_max=TMed,source=s, target=t,tightness=1)
+	# pulse_path,pulse_cost,pulse_sol_time=PG.run_pulse()
 
-	prob=eval_path(pulse_path,TMed)
-	if prob>alpha:
-		TspC=TMed
-	print(spC,prob,sep='\n')
+	# prob=eval_path(pulse_path,TMed)
+	# if prob>alpha:
+	# 	TspC=TMed
+	# print(spC,prob,sep='\n')
 	return TspT, TspC
 
 def alphaQuantile(arcs,a):
@@ -243,7 +243,7 @@ if __name__ == '__main__':
 	########################################################
 	
 	rnd.seed(1)
-	createRandomInst(n=5,wb='w')
+	createRandomInst(n=40,wb='w')
 
 	
 	# p=[142,688]#, 698, 700, 812, 471, 470, 469, 468, 467, 457, 466, 465, 861, 888, 894, 348]

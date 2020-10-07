@@ -204,7 +204,7 @@ public class PulseMain {
 		//Print results
 		finalPath = network.Path;
 
-		String text =source+"\t"+target+"\t"+ finalTime+"\t"+network.PrimalBound+"\t"+network.minTime+"\t"+ network.finalProb+"\t"+network.Bound+"\t"+network.Infeasibility+"\t"+network.Dominance+"\t"+finalPath;
+		String text =(source+1)+"\t"+(target+1)+"\t"+ finalTime+"\t"+network.PrimalBound+"\t"+network.minTime+"\t"+ network.finalProb+"\t"+network.Bound+"\t"+network.Infeasibility+"\t"+network.Dominance+"\t"+finalPath;
 		System.out.println(text);		
 
 //		System.out.println(results_path);

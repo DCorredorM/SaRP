@@ -730,19 +730,22 @@ public class VertexPulse {
 
 	public static ContPhaseVar newPHVar(ContPhaseVar pPH,ArrayList<Integer> pPath,int arc,double [] pData) {
 
-
-		if (pPath.size()%PulseGraph.refit==0) {	
+		int n=pPH.getNumPhases();		
+		double trace=0;
+		for (int i=0;i<n;i++) {
+			trace+=pPH.getMatrix().get(i, i);
+		}
+		if (pPath.size()%PulseGraph.refit==0 || (-1*trace>1000)) {	
 			pPath.add(Fitter.Arcs[arc][1]);
 			ContPhaseVar ph=Fitter.fitPath(pPath);
 //			System.out.println("El pat es: "+pPath);
 //			EMHyperErlangFit EMfit = new EMHyperErlangFit(pData);
 //			ContPhaseVar v1=EMfit.fit(Fitter.N_Phase);
 //			ContPhaseVar ph=new DenseContPhaseVar(v1.getVectorArray(),v1.getMatrixArray());
-//			System.out.println("Pase por aca!!");
+			
 			pPath.remove(pPath.size()-1);
-			return ph; 
-
-		} else {
+			return ph; 	
+		}else {
 //			System.out.println("Pase por aca...");
 			return pPH.sum(Fitter.TimeRV[arc]);// New time random variable.
 		}
@@ -759,19 +762,18 @@ public class VertexPulse {
 	 */
 	public static double calcProb(ContPhaseVar pTimeRV ,Double pTMin,int pHeadNode) {
 		double prob=0;
-//		System.out.println("Esre es el T con el que calculo: "+(PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime())+"\t\t\n"+(PulseGraph.TimeC)+"\t"+(pTMin)+"\t"+(PulseGraph.vertexes[pHeadNode].getMinTime()));
 		int n=pTimeRV.getNumPhases();		
 		double trace=0;
 		for (int i=0;i<n;i++) {
 			trace+=pTimeRV.getMatrix().get(i, i);
 		}
-//		System.out.println(pTimeRV.toString());
-		System.out.println(trace);
-		try {			
-			if(-1*trace<3000) {
-			prob=pTimeRV.cdf(Math.max(0,PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime())); //Coputes the probability of arriving on time to this node			
-			}
-			System.out.println(prob+"\n");
+		System.out.println("La traza es: "+trace+"\nEl t es: "+(PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime()));
+		try {
+//			System.out.println(pTimeRV.toString());
+			if (-1*trace<1000) {
+				prob=pTimeRV.cdf(Math.max(0,PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime())); //Coputes the probability of arriving on time to this node
+			}			
+			System.out.println("La prob es: "+prob);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
