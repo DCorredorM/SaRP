@@ -477,6 +477,7 @@ public class Fitter {
 		EMHyperErlangFit EMfit = new EMHyperErlangFit(tData);
 		ContPhaseVar pha =  EMfit.fit(N_Phase);
 		double [] tau=pha.getVectorArray();
+		
 		if (checkSubStochasticVector(tau)) {
 			DenseContPhaseVar ph= new DenseContPhaseVar(tau, pha.getMatrixArray());
 			return ph;

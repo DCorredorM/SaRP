@@ -126,7 +126,7 @@ public class PulseMain {
 		//Time limit tightness
 
 
-		network.SetConstraint(T_max*100);
+		network.SetConstraint(T_max);
 		network.Setaplpha(alpha);
 
 
@@ -170,22 +170,31 @@ public class PulseMain {
 		
 		network.getVertexByID(dataA.Source).pulse(0, ptRV, 1, 0,0, finalPath,data0);
 		
-//		int[] pat= {142, 688,698 , 700, 812, 471, 470, 469, 468, 467, 457, 466, 465, 861, 888, 894, 348};
-//		
-//		for (int i : pat) {
-//			finalPath.add(i);			
+//		int[] pat= {614, 609, 536, 398, 603, 604, 583, 807, 803, 804, 798, 794, 786, 781, 916, 915, 914, 368};
+//		int minTime=0;
+//		for (int i=0;i<pat.length; i++) {
+//			int t=pat[i];
+//			finalPath.add(t);
+//			try {
+//				int h=pat[i+1];
+//				minTime+=network.getVertexByID(t).getReversedEdges().findEdgebyTarget(network.getVertexByID(h)).getWeightTime();
+//			}catch (Exception e) {
+//				// TODO: handle exception
+//			}			
 //		}
-//		
+//		System.out.println("El min time es: "+minTime+" "+network.minTime);
+//		System.out.println(network.PH.toString()+"\n"+network.PH.expectedValue());
+		
 //		ptRV=dataA.fitPath(finalPath);
 //		
-//		double tMaxTemp= 4047.9949867853784-network.minTime;
+//		double tMaxTemp= 5593.72082381002-minTime;
 //		
 //		double probT= network.evalPath(finalPath,tMaxTemp);
 //		
 //		
 //		System.out.println("La prob de aca es: "+ptRV.cdf(tMaxTemp));
 //		System.out.println("La mean: "+ptRV.expectedValue());		
-//		
+		
 		
 		//Ends the clock
 
@@ -585,7 +594,7 @@ public class PulseMain {
 
 		for(int i = 0; i <data.NumArcs; i ++){
 
-			Gd.addWeightedEdge( Gd.getVertexByID(data.Arcs[i][0]), Gd.getVertexByID(data.Arcs[i][1]),data.Distance[i],data.MinTime[i],data.TimeRV[i], i);
+			Gd.addWeightedEdge(Gd.getVertexByID(data.Arcs[i][0]), Gd.getVertexByID(data.Arcs[i][1]),data.Distance[i],data.MinTime[i],data.TimeRV[i], i);
 		}
 		return Gd;
 	}

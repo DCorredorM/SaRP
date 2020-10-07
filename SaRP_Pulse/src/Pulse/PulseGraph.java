@@ -296,7 +296,7 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 	@Override
 	public EdgePulse getEdge(VertexPulse sourceVertex, VertexPulse targetVertex) {
 		// TODO Auto-generated method stub
-		return null;
+		return sourceVertex.getReversedEdges().findEdgebyTarget(targetVertex);
 	}
 
 	@Override

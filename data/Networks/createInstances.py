@@ -147,7 +147,7 @@ def calcTMax(s,t):
 	prob=eval_path(pulse_path,TMed)
 	if prob>alpha:
 		TspC=TMed
-	
+	print(spC,prob,sep='\n')
 	return TspT, TspC
 
 def alphaQuantile(arcs,a):
@@ -165,7 +165,8 @@ def alphaQuantile(arcs,a):
 	
 	#ph,loglike=get_PH_HE(list(data),10)
 	#print('ph10 da:', ph.cdf(np.quantile(data,a)),f'\nT es: {tmin+np.quantile(data,a)}')
-
+	# print('La mean es: ',sum(data)/len(data))
+	# print('el tmin es: ',tmin)
 	return tmin+np.quantile(data,a)
 
 def readRealizations(arcs):
@@ -242,7 +243,7 @@ if __name__ == '__main__':
 	########################################################
 	
 	rnd.seed(1)
-	createRandomInst(n=40,wb='w')
+	createRandomInst(n=5,wb='w')
 
 	
 	# p=[142,688]#, 698, 700, 812, 471, 470, 469, 468, 467, 457, 466, 465, 861, 888, 894, 348]
