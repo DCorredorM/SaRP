@@ -9,6 +9,7 @@ import no.uib.cipr.matrix.sparse.CG;
 import no.uib.cipr.matrix.sparse.DefaultIterationMonitor;
 import no.uib.cipr.matrix.sparse.IterativeSolver;
 import no.uib.cipr.matrix.sparse.IterativeSolverNotConvergedException;
+import sun.tools.tree.ThisExpression;
 /**
  * Abstract class that defines a  Continuous Phase-Type Distribution
  * @author German Ria�o

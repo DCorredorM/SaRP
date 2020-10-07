@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Random;
 import java.util.PrimitiveIterator.OfDouble;
 
@@ -453,7 +454,7 @@ public class Fitter {
 	}
 
 
-	public static ContPhaseVar fitPath(ArrayList<Integer> pPath)  {
+	public static DenseContPhaseVar fitPath(ArrayList<Integer> pPath)  {
 		double[] tData=null;
 		for (int i = 0; i < pPath.size()-1; i++) {
 			if (tData!=null) {
@@ -478,19 +479,26 @@ public class Fitter {
 		ContPhaseVar pha =  EMfit.fit(N_Phase);
 		double [] tau=pha.getVectorArray();
 		
+		double[][] A=pha.getMatrixArray();
+		
+		int n = A.length-1;
+		A[n][n]=(double) ((int)(A[n][n]*10000000))/10000000;
+		
 		if (checkSubStochasticVector(tau)) {
-			DenseContPhaseVar ph= new DenseContPhaseVar(tau, pha.getMatrixArray());
+			
+			DenseContPhaseVar ph= new DenseContPhaseVar(tau, A);
 			return ph;
-		}else {								
+		}else {		
+			
 			double cumsum=0;
 			for (double p : tau) {
 				cumsum+=p;
 			}
-
-			for (int i = 0; i < tau.length; i++) {
+			
+			for (int i = 0; i < tau.length; i++) {			
 				tau[i]=tau[i]/cumsum;
 			}
-			DenseContPhaseVar ph= new DenseContPhaseVar(tau, pha.getMatrixArray());
+			DenseContPhaseVar ph= new DenseContPhaseVar(tau, A);
 			return ph;
 		}
 		

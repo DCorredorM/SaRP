@@ -168,34 +168,35 @@ public class PulseMain {
 		double [] data0=new double[dataA.NumSample];
 		
 		
-//		network.getVertexByID(dataA.Source).pulse(0, ptRV, 1, 0,0, finalPath,data0);
+		network.getVertexByID(dataA.Source).pulse(0, ptRV, 1, 0,0, finalPath,data0);
 		
-		int[] pat= {369, 915, 916, 781, 786, 794, 798, 804, 803, 807, 583, 587, 396, 397, 402, 403, 404, 487, 486, 534, 485};//, 479, 478, 477, 476, 503, 504, 505, 506, 507, 508, 666, 668, 850, 852, 859, 860, 909, 910, 364};
-		int minTime=0;
-		for (int i=0;i<pat.length; i++) {
-			int t=pat[i];
-			finalPath.add(t);
-			try {
-				int h=pat[i+1];
-				minTime+=network.getVertexByID(t).getReversedEdges().findEdgebyTarget(network.getVertexByID(h)).getWeightTime();
-			}catch (Exception e) {
-				// TODO: handle exception
-			}			
-		}
-
-		
-		
-		ptRV=dataA.fitPath(finalPath);
-		
-		double tMaxTemp= T_max-minTime-PulseGraph.vertexes[pat[pat.length-1]].getMinTime();
-		
-		double probT= network.evalPath(finalPath,T_max-PulseGraph.vertexes[pat[pat.length-1]].getMinTime());
-		System.out.println("Prob con suma: "+probT+"\n");
-		
-		System.out.println("La prob fit de aca es: "+ptRV.cdf(tMaxTemp));
-		System.out.println("La mean: "+ptRV.expectedValue());		
-		System.out.println("El t min es: "+minTime);
-		
+//		int[] pat= {369, 915, 916, 781, 786, 794, 798, 804, 803, 807, 583, 587, 396, 397, 402, 403, 404, 487, 486, 534, 485, 479, 478, 477, 476, 503, 504, 505, 506, 507, 508, 666, 668, 850, 852, 859, 860, 909, 910, 364};
+//		int minTime=0;
+//		for (int i=0;i<pat.length; i++) {
+//			int t=pat[i];
+//			finalPath.add(t);
+//			try {
+//				int h=pat[i+1];
+//				minTime+=network.getVertexByID(t).getReversedEdges().findEdgebyTarget(network.getVertexByID(h)).getWeightTime();
+//			}catch (Exception e) {
+//				// TODO: handle exception
+//			}			
+//		}		
+//		
+//		double tMaxTemp= T_max-minTime-PulseGraph.vertexes[pat[pat.length-1]].getMinTime();
+//		
+//		double probT= network.evalPath(finalPath,T_max-PulseGraph.vertexes[pat[pat.length-1]].getMinTime());
+//		
+//		
+//		
+//		
+//		System.out.println("Prob con suma: "+probT+"\n");		
+//		
+//		DenseContPhaseVar ptRV1=dataA.fitPath(finalPath);
+//		System.out.println("La prob fit de aca es: "+ptRV1.cdf(tMaxTemp)+"\nCalculado con T de: "+tMaxTemp);
+//		System.out.println("La mean: "+ptRV1.expectedValue());		
+//		System.out.println("El t min es: "+minTime);
+//		System.out.println("Momentos Fit: "+ptRV1.moment(1)+"\t"+ptRV1.moment(2)+"\t"+ptRV1.moment(3));
 		
 		//Ends the clock
 

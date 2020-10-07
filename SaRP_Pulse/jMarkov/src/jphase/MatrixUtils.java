@@ -879,7 +879,7 @@ public class MatrixUtils {
 		try {
 			solver.solve(temp,rightVec, M1);
 		} catch (IterativeSolverNotConvergedException e) {
-			//System.out.println("El num de iterations es: "+e.getIterations());
+//			System.out.println("El num de iterations es: "+e.getIterations());
 //			e.printStackTrace();
 //			for (int i = 0; i < A.numRows(); i++) {
 //				String fil="";
@@ -888,7 +888,7 @@ public class MatrixUtils {
 //				}
 //				System.out.println(fil);
 //			}
-			//throw e;
+//			throw e;
 		}
 		m = leftVec.dot(M1);
 

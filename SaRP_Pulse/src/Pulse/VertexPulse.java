@@ -772,12 +772,12 @@ public class VertexPulse {
 			
 			if (-1*trace<3000) {
 				prob=pTimeRV.cdf(Math.max(0,PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime())); //Coputes the probability of arriving on time to this node
+//				System.out.println("La traza es: "+trace);
+//				System.out.println("La prob es: "+prob);
+				
+//				System.out.println(pTimeRV.toString());
 			}else {
 				prob=1.0;
-				System.out.println("La traza es: "+trace);
-				System.out.println("La prob es: "+prob);
-				System.out.println(pTimeRV.toString());
-				
 			}
 			
 		} catch (Exception e) {

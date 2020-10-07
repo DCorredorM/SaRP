@@ -221,9 +221,11 @@ def eval_path(path1,pT_max):
 		if len(pat)==0:
 			prob=0
 		
-		ph,loglike=get_PH_HE(list(data),50)
+		ph,loglike=get_PH_HE(list(data),5)
 		print('El tmin es: ',tmin)
+		print("La calculo con: ",pT_max-tmin)
 		print('prob ph: ',ph.cdf(pT_max-tmin))
+		print(ph.alpha,"\n",ph.T)
 		# print('ph10 da:', ph.cdf(pT_max-tmin))		
 		# #print('El valE es: ',ph.T)
 		# print('El valE es: ',np.mean(data))
@@ -239,7 +241,7 @@ if __name__ == '__main__':
 	city=cities[1]
 	creates_graphs()	
 	alpha=0.8
-	CV=0.5
+	CV=0.8
 	experim=INDEP #If creating instances for Independen experiments or Scenario experiments
 	########################################################
 	
