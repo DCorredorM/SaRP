@@ -201,7 +201,7 @@ def runInstancesIndependent(nPhases,clearF=True):
 					probPost=evalPath(path,nSim=n_it*10,pTMax=T)
 				else:
 					probPost=0
-				
+		
 				t_pulse,pulse_cost,pulse_sol_time,probAnte,bound, infeas,dom,pulse_path=info[2:]
 				d=f'{s}\t{t}\t{t_pulse}\t{pulse_cost}\t{pulse_sol_time}\t{probAnte}\t{probPost}\t{bound}\t{infeas}\t{dom}\t{pulse_path}\n'
 				
@@ -219,11 +219,11 @@ def runInstancesIndependent(nPhases,clearF=True):
 			resultFile.write(d)
 			
 			#Solve SaRP with MC
-			t_pulse,pulse_cost,pulse_sol_time,probAnte,probPost,bound, infeas,dom,pulse_path=solveSaRPMC(s,t,T)
-			d=f'{s}\t{t}\t{t_pulse}\t{pulse_cost}\t{pulse_sol_time}\t{probAnte}\t{probPost}\t{bound}\t{infeas}\t{dom}\t{pulse_path}\n'
-			resultFile=open(f'{results}/MC_Pulse.txt',wb)
-			print(f'PulseMC\t{d}')
-			resultFile.write(d)
+			# t_pulse,pulse_cost,pulse_sol_time,probAnte,probPost,bound, infeas,dom,pulse_path=solveSaRPMC(s,t,T)
+			# d=f'{s}\t{t}\t{t_pulse}\t{pulse_cost}\t{pulse_sol_time}\t{probAnte}\t{probPost}\t{bound}\t{infeas}\t{dom}\t{pulse_path}\n'
+			# resultFile=open(f'{results}/MC_Pulse.txt',wb)
+			# print(f'PulseMC\t{d}')
+			# resultFile.write(d)
 			wb='a'
 
 
@@ -256,11 +256,10 @@ if __name__ == '__main__':
 	city='Chicago-Sketch'	
 	timeLimit=5000	
 	tightness=0.8
-	#nPhases=3
 	CV=0.8
 	alpha=0.9
 	n_it=500	#Number of realizations for Montecarlo
-	refit=5
+	refit=3
 	creates_graphs()
 	########################################################		
 
