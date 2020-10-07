@@ -767,13 +767,19 @@ public class VertexPulse {
 		for (int i=0;i<n;i++) {
 			trace+=pTimeRV.getMatrix().get(i, i);
 		}
-		System.out.println("La traza es: "+trace+"\nEl t es: "+(PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime()));
+		
 		try {
-//			System.out.println(pTimeRV.toString());
-			if (-1*trace<1000) {
+			
+			if (-1*trace<3000) {
 				prob=pTimeRV.cdf(Math.max(0,PulseGraph.TimeC-pTMin-PulseGraph.vertexes[pHeadNode].getMinTime())); //Coputes the probability of arriving on time to this node
-			}			
-			System.out.println("La prob es: "+prob);
+			}else {
+				prob=1.0;
+				System.out.println("La traza es: "+trace);
+				System.out.println("La prob es: "+prob);
+				System.out.println(pTimeRV.toString());
+				
+			}
+			
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -965,6 +971,7 @@ public class VertexPulse {
 			return getMinDist();
 		}else {
 //			System.out.println("Entre aca, minTime es "+getMinTime());
+//			return getMinTime();
 			return getMinDist();
 		}
 	}

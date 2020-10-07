@@ -456,14 +456,20 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 
 				if (vertexes[Fitter.Arcs[e][1]].id==head.id) {
 					ptRV=Fitter.TimeRV[e].sum(ptRV);
-					tmin+=Fitter.MinTime[e];					
+					tmin+=Fitter.MinTime[e];
+					System.out.println(tail.id+" "+head.id+"\n"+Fitter.TimeRV[e].toString());
 				}				
 			}				
 		}
 
 //		System.out.println("El tmin es: "+tmin);
 //		System.out.println(ptRV.toString());
-//		System.out.println("El valE es: "+ptRV.expectedValue());
+//		System.out.println("El valE es de sum: "+ptRV.expectedValue());
+		double trace=0;
+		for (int i = 0; i < ptRV.getNumPhases(); i++) {
+			trace+=ptRV.getMatrixArray()[i][i];
+		}
+		System.out.println("la traza es"+ trace);
 		prob=ptRV.cdf(Math.max(0,tmax-tmin)); //Coputes the probability of arriving on time to this node
 		return prob;
 	}

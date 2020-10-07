@@ -292,7 +292,11 @@ def fitPHScenarios(nScen,nPhases,net='Chicago-Sketch'):
 			ii,jj,data=l.replace('\n','').split('\t')
 			data=list(map(float,data.replace('[','').replace(']','').split(', ')))
 			
-			ph,loglike=get_PH_HE(data,nPhases)			
+			ph,loglike=get_PH_HE(data,nPhases)
+			np=1
+			while ph.trace()>1000:
+				ph,loglike=get_PH_HE(data,nPhases+np)
+				np+=1
 			fout.write(f'{i}\t{j}\t{arcs[i,j][0]}\t{arcs[i,j][2]}\t{[list(map(lambda x: round(float(x),10),k))[0]for k in ph.alpha.tolist()]}\t{[list(map(lambda x: round(float(x),10),k))for k in ph.T.tolist()]}\n')
 		print(n/N)
 	for fin,fout in zip(files,filesOut): (fin.close(),fout.close())

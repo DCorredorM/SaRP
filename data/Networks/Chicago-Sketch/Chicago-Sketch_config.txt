@@ -6,6 +6,6 @@ Time Constraint:10888
 Start Node:370
 End Node:365
 Number of Phases:5
-alpha:0.9
+alpha:0.5
 Time Limit:5000
-refit:5
+refit:2

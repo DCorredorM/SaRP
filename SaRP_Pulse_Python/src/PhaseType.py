@@ -67,3 +67,13 @@ class PH:
 					C[i+self.T.cols,j+self.T.rows]=v2.T[i,j]
 			
 			return(PH(C,gamma))
+
+	def trace(self):
+		'''
+		Description
+		Args:
+			arg1(type):description.
+		Return:
+			Return(type):description.
+		'''
+		return sum(np.diag(self.T))
