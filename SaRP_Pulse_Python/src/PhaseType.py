@@ -76,4 +76,5 @@ class PH:
 		Return:
 			Return(type):description.
 		'''
-		return sum(np.diag(self.T))
+		
+		return sum(self.T[i,i] for i in range(len(self.T)))

@@ -28,3 +28,6 @@ Distrubution	Chicago-Sketch	888.6318345069885
 PhaseType fit 3	Chicago-Sketch	0.2999694347381592
 PhaseType fit 5	Chicago-Sketch	0.48987555503845215
 Distrubution	Chicago-Sketch	1077.473256111145
+PhaseType fit 3	Chicago-Sketch	627.8709988594055
+PhaseType fit 5	Chicago-Sketch	2103.710464954376
+Distrubution	Chicago-Sketch	980.1458866596222

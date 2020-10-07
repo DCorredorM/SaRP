@@ -332,11 +332,11 @@ def fitIndependent(nPhases,net='Chicago-Sketch'):
 		for ii,np in enumerate(nPhases):
 			tFit=time.time()			
 			ph,loglike=get_PH_HE(data,np)
-			np=1
+			npa=1			
 			while ph.trace()>1000:
 				print(ph.T)
-				ph,loglike=get_PH_HE(data,nPhases+np)
-				np+=1
+				ph,loglike=get_PH_HE(data,nPhases+npa)
+				npa+=1
 			fittingTimes[np]+=time.time()-tFit
 			fileOut[ii].write(f'{i}\t{j}\t{arcs[i,j][0]}\t{arcs[i,j][2]}\t{[list(map(lambda x: round(float(x),10),k))[0]for k in ph.alpha.tolist()]}\t{[list(map(lambda x: round(float(x),10),k))for k in ph.T.tolist()]}\n')
 			
@@ -370,7 +370,7 @@ if __name__ == '__main__':
 	########################################################
 
 	
-	for cv in [0.3,0.5,0.8,1]:
+	for cv in [0.8,1,0.3,0.5]:
 		CV=cv
 		createDataIndependent(n=1000,net='Chicago-Sketch')
 		fitIndependent(nPhases=[3,5],net='Chicago-Sketch')
