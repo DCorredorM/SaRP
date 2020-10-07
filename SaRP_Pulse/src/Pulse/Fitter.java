@@ -458,7 +458,7 @@ public class Fitter {
 		double[] tData=null;
 		for (int i = 0; i < pPath.size()-1; i++) {
 			if (tData!=null) {
-				
+
 				try {
 					tData=sum(tData,Data[getArcId(pPath.get(i),pPath.get(i+1))]);
 				} catch (Exception e) {
@@ -474,38 +474,40 @@ public class Fitter {
 				}
 			}
 		}
-		
+
 		EMHyperErlangFit EMfit = new EMHyperErlangFit(tData);
-		ContPhaseVar pha =  EMfit.fit(N_Phase);
+		ContPhaseVar pha =  EMfit.fit(N_Phase*PulseGraph.refit);
+		
+		int ii=0;
+		while (!jphase.MatrixUtils.checkSubGeneratorMatrix(pha.getMatrix())) {
+			EMfit = new EMHyperErlangFit(tData);
+			pha =  EMfit.fit(N_Phase*PulseGraph.refit+ii);
+			ii++;
+		}
+		
 		double [] tau=pha.getVectorArray();
-		
 		double[][] A=pha.getMatrixArray();
-		
 		int n = A.length-1;
 		A[n][n]=(double) ((int)(A[n][n]*10000000))/10000000;
-		
-		if (checkSubStochasticVector(tau)) {
-			
-			DenseContPhaseVar ph= new DenseContPhaseVar(tau, A);
-			return ph;
-		}else {		
-			
+
+		if (!checkSubStochasticVector(tau)){		
+
 			double cumsum=0;
 			for (double p : tau) {
 				cumsum+=p;
 			}
-			
+
 			for (int i = 0; i < tau.length; i++) {			
 				tau[i]=tau[i]/cumsum;
 			}
-			DenseContPhaseVar ph= new DenseContPhaseVar(tau, A);
-			return ph;
 		}
-		
-		
-				
+
+
+		DenseContPhaseVar ph= new DenseContPhaseVar(tau, A);
+		return ph;
+
 	}
-	
+
 	public static int getArcId(int i,int j) throws Exception {
 		int cont=0;
 		boolean f=false;
@@ -518,7 +520,7 @@ public class Fitter {
 		}
 		throw new Exception("Arc ("+i+", "+j+") Not found");
 	}
-	
+
 	public static double[] sum(double[] d1, double[]d2) {
 		double[] s=new double[d1.length];
 		for (int i = 0; i < d1.length; i++) {

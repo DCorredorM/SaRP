@@ -738,11 +738,8 @@ public class VertexPulse {
 		if (pPath.size()%PulseGraph.refit==0 || (-1*trace>1000)) {	
 			pPath.add(Fitter.Arcs[arc][1]);
 			ContPhaseVar ph=Fitter.fitPath(pPath);
-//			System.out.println("El pat es: "+pPath);
-//			EMHyperErlangFit EMfit = new EMHyperErlangFit(pData);
-//			ContPhaseVar v1=EMfit.fit(Fitter.N_Phase);
-//			ContPhaseVar ph=new DenseContPhaseVar(v1.getVectorArray(),v1.getMatrixArray());
-			
+			System.out.println("El path para refit es: "+pPath);
+			System.out.println(ph.toString());
 			pPath.remove(pPath.size()-1);
 			return ph; 	
 		}else {

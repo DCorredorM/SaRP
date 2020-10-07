@@ -930,7 +930,7 @@ public class MatrixUtils {
 			double pk = Math.exp(-ldaX);
 
 			if (pk < Double.MIN_VALUE) {
-				System.out.println("pk menor que Double.MIN_VALUE");
+//				System.out.println("pk menor que Double.MIN_VALUE");
 				result[i] = resultFromMedian(As, ldaX);
 			} else {
 				double sumPk = pk;
@@ -1454,11 +1454,13 @@ public class MatrixUtils {
 					cumsum += A.get(i,j);
 					if ((i == j && A.get(i,j) > - Epsilon) || (i != j && A.get(i,j) < - Epsilon)){
 						res = false;
+						System.out.println("Por esto no es substochastic... \n"+i+" "+j+" "+A.get(i,j));
 						i += n;
 						break;
 					}
 				}
 				if (cumsum > Epsilon){
+					System.out.println("Por esto no es substochastic... \n"+cumsum);
 					res = false;
 					break;
 				}
