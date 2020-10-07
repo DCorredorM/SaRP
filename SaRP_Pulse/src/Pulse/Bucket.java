@@ -7,7 +7,7 @@
  * 
  * 
  * @author D. Duque
- * @affiliation Universidad de los Andes - Centro para la Optimización y Probabilidad Aplicada (COPA)
+ * @affiliation Universidad de los Andes - Centro para la Optimizaciï¿½n y Probabilidad Aplicada (COPA)
  * @url http://copa.uniandes.edu.co/
  * 
  */
@@ -54,6 +54,13 @@ public class Bucket {
 			entrance = v;
 		}
 	}
+	public void insertVertexExpTime(VertexPulse v){
+		if(entrance!=null){
+			entrance.insertVertexExpTime(v);
+		}else{
+			entrance = v;
+		}
+	}
 	
 	
 	/**
@@ -81,7 +88,16 @@ public class Bucket {
 		}
 		return false;
 	}
-	
+	public boolean deleteLabeledVertexExpTime(){
+		//Delete entrance / FIFO policy 
+		entrance = entrance.getBRigthExpTime();
+		boolean emp = entrance.getBLeftExpTime().unLinkVertexExpTime();
+		if(emp){
+			entrance = null;
+			return true;
+		}
+		return false;
+	}
 	
 	
 	public boolean deleteToMoveDist(VertexPulse v){
@@ -99,6 +115,16 @@ public class Bucket {
 			entrance = entrance.getBRigthTime();
 		}
 		if(v.unLinkVertexTime()){
+			entrance = null;
+			return true;
+		}
+		return false;
+	}
+	public boolean deleteToMoveExpTime(VertexPulse v){
+		if(entrance.getID() == v.getID()){
+			entrance = entrance.getBRigthExpTime();
+		}
+		if(v.unLinkVertexExpTime()){
 			entrance = null;
 			return true;
 		}

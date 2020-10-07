@@ -7,7 +7,7 @@
  * 
  * 
  * @author D. Duque
- * @affiliation Universidad de los Andes - Centro para la Optimización y Probabilidad Aplicada (COPA)
+ * @affiliation Universidad de los Andes - Centro para la Optimizaciï¿½n y Probabilidad Aplicada (COPA)
  * @url http://copa.uniandes.edu.co/
  * 
  */
@@ -132,7 +132,8 @@ public class DukqstraDist {
 						int ndj = di + e.getWeightDist();
 						// dMap.put(vj.getID(), ndj);
 						vj.setMinDist(ndj);
-						vj.setMaxTime(ti + e.getWeightMeanTime());
+						vj.setMaxTime(ti + e.getWeightTime());
+						vj.setMaxExpTime(ti + e.getWeightExpTime());
 						if (ndj < dK) {
 							if (vj.isInserteDist()) {
 								moveToLow(dj, ndj, vj);
@@ -150,6 +151,7 @@ public class DukqstraDist {
 						}
 					}
 					e = e.getNext();
+					
 				}
 				if(empty){
 					lowIterator = moveInLow(lowIterator);
@@ -195,11 +197,14 @@ public class DukqstraDist {
 			VertexPulse entrance = baseAproxBucket.getEntrance(); 
 			entrance.getBLeftDist().unlinkRighBoundDist();
 			int dv;
+			int p=0;
 			while(entrance!=null){
 				baseAproxBucket.deleteToPassDist(entrance);
 				dv= entrance.getMinDist();
 				lowLevelBuckets[dv-dL].insertVertexDist(entrance);
 				entrance = baseAproxBucket.getEntrance();
+//				System.out.println((dv-dL)+" "+p);
+				p++;
 			}
 			highLevelBuckets[iH]=null;
 			int oldBaseKEy= baseAproxBucket.getKey();
@@ -397,6 +402,7 @@ public class DukqstraDist {
 	
 	
 	private int moveInLow(int lowIter){
+		
 		while(lowIter<Delta){
 			if(!lowLevelBuckets[lowIter].empty()){
 				return lowIter;

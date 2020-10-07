@@ -7,7 +7,7 @@
  * 
  * 
  * @author D. Duque
- * @affiliation Universidad de los Andes - Centro para la Optimización y Probabilidad Aplicada (COPA)
+ * @affiliation Universidad de los Andes - Centro para la Optimizaciï¿½n y Probabilidad Aplicada (COPA)
  * @url http://copa.uniandes.edu.co/
  * 
  */
@@ -65,6 +65,10 @@ public class AproxBucket {
 		//System.out.println("Entrando "+ v.getID() + " FO : " + v.getMinCost() );
 		entrance.insertVertexTime(v);
 	}
+	public void insertVertexExpTime(VertexPulse v){
+		//System.out.println("Entrando "+ v.getID() + " FO : " + v.getMinCost() );
+		entrance.insertVertexExpTime(v);
+	}
 	
 	/**
 	 * 
@@ -87,7 +91,10 @@ public class AproxBucket {
 		entrance = entrance.getBRigthTime();
 		v.fastUnlinkTime();
 	}
-
+	public void deleteToPassExpTime(VertexPulse v){
+		entrance = entrance.getBRigthExpTime();
+		v.fastUnlinkExpTime();
+	}
 	
 	public boolean deleteToMoveDist(VertexPulse v){
 		if(entrance.getID() == v.getID()){
@@ -101,6 +108,12 @@ public class AproxBucket {
 			entrance = entrance.getBRigthTime();
 		}
 		return v.unLinkVertexTime();
+	}
+	public boolean deleteToMoveExpTime(VertexPulse v){
+		if(entrance.getID() == v.getID()){
+			entrance = entrance.getBRigthExpTime();
+		}
+		return v.unLinkVertexExpTime();
 	}
 
 	
@@ -166,5 +179,8 @@ public class AproxBucket {
 	}
 	public void turnTheBucketTime(){
 		entrance= entrance.getBRigthTime();
+	}
+	public void turnTheBucketExpTime(){
+		entrance= entrance.getBRigthExpTime();
 	}
 }

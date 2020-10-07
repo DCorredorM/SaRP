@@ -46,7 +46,8 @@ public class VertexPulse {
 	int maxTime;
 	int minTime;
 	int maxDist;
-
+	int maxExpTime;
+	int minExpTime;
 
 
 	/**
@@ -65,8 +66,11 @@ public class VertexPulse {
 	private VertexPulse rigthDist;
 	private VertexPulse leftTime;
 	private VertexPulse rigthTime;
+	private VertexPulse leftExpTime;
+	private VertexPulse rigthExpTime;
 	private boolean insertedDist;
 	private boolean insertedTime;
+	private boolean insertedExpTime;
 
 	/**
 	 * Creates a node
@@ -77,6 +81,8 @@ public class VertexPulse {
 		insertedDist = false;
 		minDist = infinity;
 		minTime = infinity;
+		minExpTime = infinity;
+		maxExpTime = 0;
 		maxTime = 0;
 		maxDist = 0;
 
@@ -84,6 +90,8 @@ public class VertexPulse {
 		rigthDist = this;
 		leftTime = this;
 		rigthTime = this;
+		leftExpTime = this;
+		rigthExpTime = this;
 
 		labels = new ArrayList<Label>();
 
@@ -156,6 +164,20 @@ public class VertexPulse {
 		return maxTime;
 	}
 	/**
+	 * Sets the maximum time
+	 * @param d
+	 */
+	public void setMaxExpTime(int d){
+		maxExpTime = d;
+	}
+	/**
+	 * Returns the maximum time
+	 * @return
+	 */
+	public int getMaxExpTime(){
+		return maxExpTime;
+	}
+	/**
 	 * Sets the minimum time
 	 * @param ntj
 	 */
@@ -168,6 +190,20 @@ public class VertexPulse {
 	 */
 	public int getMinTime(){
 		return minTime;
+	}
+	/**
+	 * Sets the minimum time
+	 * @param ntj
+	 */
+	public void setMinExpTime(int ntj){
+		minExpTime = ntj;
+	}
+	/**
+	 * Returns the minimum time
+	 * @return
+	 */
+	public int getMinExpTime(){
+		return minExpTime;
 	}
 	/**
 	 * Sets the maximum distance
@@ -219,7 +255,23 @@ public class VertexPulse {
 			return false;
 		}
 	}
-
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean unLinkVertexExpTime(){
+		if(rigthExpTime.getID() == id){
+			leftExpTime=this;
+			rigthExpTime=this;
+			return true;
+		}else{
+			leftExpTime.setRigthExpTime(rigthExpTime);
+			rigthExpTime.setLeftExpTime(leftExpTime);
+			leftExpTime = this;
+			rigthExpTime = this;
+			return false;
+		}
+	}
 	public void fastUnlinkDist(){
 		leftDist=this;
 		rigthDist=this;
@@ -228,6 +280,10 @@ public class VertexPulse {
 		leftTime = this;
 		rigthTime = this;
 	}
+	public void fastUnlinkExpTime(){
+		leftExpTime = this;
+		rigthExpTime = this;
+	}
 	public void unlinkRighBoundDist()
 	{
 		rigthDist = null;
@@ -235,6 +291,10 @@ public class VertexPulse {
 	public void unlinkRighBoundTime()
 	{
 		rigthTime = null;
+	}
+	public void unlinkRighBoundExpTime()
+	{
+		rigthExpTime = null;
 	}
 	/**
 	 * Insert a vertex in a bucket. 
@@ -258,7 +318,15 @@ public class VertexPulse {
 		leftTime.setRigthTime(v);
 		leftTime = v;
 	}
-
+	/**
+	 * 
+	 * @param v
+	 */
+	public void insertVertexExpTime(VertexPulse v) {
+		v.setLeftExpTime(leftExpTime);
+		v.setRigthExpTime(this);
+		leftExpTime = v;
+	}
 	/**
 	 * Distance basic methods
 	 */
@@ -301,7 +369,27 @@ public class VertexPulse {
 	public boolean isInsertedTime(){
 		return insertedTime;
 	}
-
+	/**
+	 * Exp Time basic methods
+	 */
+	public void setLeftExpTime(VertexPulse v){
+		leftExpTime= v;
+	}
+	public void setRigthExpTime(VertexPulse v){
+		rigthExpTime= v;
+	}
+	public VertexPulse getBLeftExpTime(){
+		return leftExpTime;
+	}
+	public VertexPulse getBRigthExpTime(){
+		return rigthExpTime;
+	}
+	public void setInsertedExpTime(){
+		insertedExpTime = true;
+	}
+	public boolean isInsertedExpTime(){
+		return insertedExpTime;
+	}
 
 
 
@@ -312,7 +400,6 @@ public class VertexPulse {
 		insertedDist = false;
 	}
 
-	// This is the pulse procedure
 	/**
 	 * This is the pulse procedure
 	 * @param PTime
@@ -874,8 +961,8 @@ public class VertexPulse {
 		if (PulseGraph.PrimalBound<9999999) {
 			return getMinDist();
 		}else {
-			System.out.println("Entre aca, minTime es "+getMinTime());
-			return getMinTime();
+//			System.out.println("Entre aca, minTime es "+getMinTime());
+			return getMinDist();
 		}
 	}
 

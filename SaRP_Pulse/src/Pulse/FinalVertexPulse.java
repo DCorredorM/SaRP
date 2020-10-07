@@ -42,6 +42,8 @@ public class FinalVertexPulse extends VertexPulse {
 	int maxTime;
 	int minTime;
 	int maxDist;
+	int minExpTime;
+	int maxExpTime;
 	
 	/**
 	 * 
@@ -122,12 +124,26 @@ public class FinalVertexPulse extends VertexPulse {
 	public int getMaxTime(){
 		return maxTime;
 	}
+	public void setMaxExpTime(int mt){
+		maxTime = mt;
+	}
+	
+	public int getMaxExpTime(){
+		return maxTime;
+	}
 	
 	public void setMinTime(int t){
 		minTime = t;
 	}
 	
 	public int getMinTime(){
+		return minTime;
+	}
+	public void setMinExpTime(int t){
+		minTime = t;
+	}
+	
+	public int getMinExpTime(){
 		return minTime;
 	}
 	
@@ -188,6 +204,105 @@ public class FinalVertexPulse extends VertexPulse {
 	public boolean isInserteDist(){
 		return inserted;
 	}
+	/**
+	 * Unlink a vertex from the bucket
+	 * @return true, if the buckets gets empty
+	 */
+	public boolean unLinkVertexTime(){
+		if(bRigth.getID() == id){
+			bLeft=this;
+			bRigth=this;
+			return true;
+		}else{
+			bLeft.setRigthTime(bRigth);
+			bRigth.setLeftTime(bLeft);
+			bLeft = this;
+			bRigth = this;
+			return false;
+		}
+	}
+	/**
+	 * Insert a vertex in a bucket. 
+	 * New vertex is inserted on the left of the bucket entrance 
+	 * @param v vertex in progress to be inserted
+	 */
+	public void insertVertexTime(VertexPulse v) {
+		v.setLeftTime(bLeft);
+		v.setRigthTime(this);
+		bLeft.setRigthTime(v);
+		bLeft = v;
+	}
+	
+	
+	public void setLeftTime(VertexPulse v){
+		bLeft= v;
+	}
+	public void setRigthTime(VertexPulse v){
+		bRigth= v;
+	}
+	public VertexPulse getBLeftTime(){
+		return bLeft;
+	}
+	public VertexPulse getBRigthTime(){
+		return bRigth;
+	}
+	public void setInsertedTime(){
+		inserted = true;
+	}
+	public boolean isInserteTime(){
+		return inserted;
+	}
+
+	/**
+	 * Unlink a vertex from the bucket
+	 * @return true, if the buckets gets empty
+	 */
+	public boolean unLinkVertexExpTime(){
+		if(bRigth.getID() == id){
+			bLeft=this;
+			bRigth=this;
+			return true;
+		}else{
+			bLeft.setRigthExpTime(bRigth);
+			bRigth.setLeftExpTime(bLeft);
+			bLeft = this;
+			bRigth = this;
+			return false;
+		}
+	}
+	/**
+	 * Insert a vertex in a bucket. 
+	 * New vertex is inserted on the left of the bucket entrance 
+	 * @param v vertex in progress to be inserted
+	 */
+	public void insertVertexExpTime(VertexPulse v) {
+		v.setLeftExpTime(bLeft);
+		v.setRigthExpTime(this);
+		bLeft.setRigthExpTime(v);
+		bLeft = v;
+	}
+	
+	
+	public void setLeftExpTime(VertexPulse v){
+		bLeft= v;
+	}
+	public void setRigthExpTime(VertexPulse v){
+		
+		bRigth= v;
+	}
+	public VertexPulse getBLeftExpTime(){
+		return bLeft;
+	}
+	public VertexPulse getBRigthExpTime(){
+		return bRigth;
+	}
+	public void setInsertedExpTime(){
+		inserted = true;
+	}
+	public boolean isInserteExpTime(){
+		return inserted;
+	}
+
 
 	public void reset(){
 		inserted = false;
@@ -196,7 +311,6 @@ public class FinalVertexPulse extends VertexPulse {
 		maxDist = MD- minDist;
 		maxTime = MT - minTime;
 	}
-		
 	/**
 	 * This is the pulse for the last node !!!
 	 * If the path is feasible and updates the primal bound the information on the best solution found is updated

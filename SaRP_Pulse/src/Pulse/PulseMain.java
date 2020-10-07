@@ -81,8 +81,8 @@ public class PulseMain {
 			rowA++;
 		}
 		double T_max=Double.parseDouble(information[4]);
-		int source =Integer.parseInt(information[5]);
-		int target =Integer.parseInt(information[6]);
+		int source =Integer.parseInt(information[5])-1;
+		int target =Integer.parseInt(information[6])-1;
 		int num_nodes=Integer.parseInt(information[3]);
 		int num_arcs=Integer.parseInt(information[2]);
 		int N_Phases=Integer.parseInt(information[7]);
@@ -126,7 +126,7 @@ public class PulseMain {
 		//Time limit tightness
 
 
-		network.SetConstraint(T_max);
+		network.SetConstraint(T_max*100);
 		network.Setaplpha(alpha);
 
 
@@ -621,21 +621,29 @@ public class PulseMain {
 	 */
 	private static void SP(Fitter data, PulseGraph network) throws InterruptedException {
 		// Create two threads and run parallel SP for the initialization		
-		Thread tTime = new Thread();
+		Thread tTime = new Thread();		
 		Thread tDist = new Thread();
+//		Thread tExpTime = new Thread();
 
 		// Reverse the network and run SP for distance and time 
 		DukqstraDist spDist = new DukqstraDist(network, data.LastNode);
 		DukqstraTime spTime = new DukqstraTime(network, data.LastNode);
-		tDist = new Thread(new ShortestPathTask(1, spDist, null));
-
-		tTime = new Thread(new ShortestPathTask(0, null,  spTime));
+//		DukqstraExpTime spExpTime = new DukqstraExpTime(network, data.LastNode);
+		
+		tDist = new Thread(new ShortestPathTask(1, spDist, null,null));
+		tTime = new Thread(new ShortestPathTask(0, null,  spTime,null));
+//		tExpTime=new Thread(new ShortestPathTask(2, null, null, spExpTime));
+		
+//		VertexPulse f=network.getVertexByID(data.LastNode);
+//		System.out.println(f.getBLeftExpTime().id + " "+f.id+" "+ f.getBRigthExpTime().id);
+		
 		tDist.start();
-
 		tTime.start();
+//		tExpTime.start();
+		
 		tDist.join();
-
 		tTime.join();
+//		tExpTime.join();
 	}
 
 	/**

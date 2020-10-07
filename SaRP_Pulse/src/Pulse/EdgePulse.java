@@ -129,7 +129,14 @@ public class EdgePulse {
 	public int getWeightMeanTime(){
 		return eMeanTime;
 	}
-	
+	/**
+	 * This method returns the edge mean time
+	 * @return edge time
+	 */
+	public int getWeightExpTime(){
+//		System.out.println(eMeanTime);
+		return eMeanTime;
+	}
 	
 	/**
 	 * This method returns the edge free flow time

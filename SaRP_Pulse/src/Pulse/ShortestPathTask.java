@@ -7,7 +7,7 @@
  * 
  * 
  * @author L. Lozano & D. Duque
- * @affiliation Universidad de los Andes - Centro para la Optimización y Probabilidad Aplicada (COPA)
+ * @affiliation Universidad de los Andes - Centro para la Optimizaciï¿½n y Probabilidad Aplicada (COPA)
  * @url http://copa.uniandes.edu.co/
  * 
  */
@@ -24,6 +24,10 @@ public class ShortestPathTask implements Runnable {
 	 */
 	private DukqstraTime spTime;
 	/**
+	 * The dijkstra for Exptime
+	 */
+	private DukqstraExpTime spExpTime;
+	/**
 	 * A boolean indicator to know if it is for time or for distance
 	 */
 	private int algoRuning;
@@ -33,13 +37,15 @@ public class ShortestPathTask implements Runnable {
 	 * @param dD
 	 * @param dT
 	 */
-	public ShortestPathTask(int quienEs, DukqstraDist dD, DukqstraTime dT) {
+	public ShortestPathTask(int quienEs, DukqstraDist dD, DukqstraTime dT, DukqstraExpTime dET) {
 		//quienES 1 Dist, 0 Time;
 		algoRuning = quienEs;
 		if(quienEs==1){
 			spDist = dD;
-		}else{
+		}else if (quienEs==0){
 			spTime = dT;
+		}else {
+			spExpTime = dET;
 		}
 	}
 	/**
@@ -49,8 +55,10 @@ public class ShortestPathTask implements Runnable {
 		// TODO Auto-generated method stub
 		if(algoRuning==1){
 			spDist.runAlgDist();
-		}else{
+		}else if (algoRuning==0){
 			spTime.runAlgTime();
+		}else {
+			spExpTime.runAlgExpTime();
 		}
 	}
 

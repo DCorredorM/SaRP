@@ -7,14 +7,14 @@
  * 
  * 
  * @author D. Duque
- * @affiliation Universidad de los Andes - Centro para la Optimización y Probabilidad Aplicada (COPA)
+ * @affiliation Universidad de los Andes - Centro para la Optimizaciï¿½n y Probabilidad Aplicada (COPA)
  * @url http://copa.uniandes.edu.co/
  * 
  */
 
 package Pulse;
 
-
+import com.sun.org.apache.xpath.internal.operations.And;
 
 public class DukqstraTime {
 	public int C;
@@ -157,6 +157,9 @@ public class DukqstraTime {
 			dL = indexL*Delta;
 			VertexPulse entrance = baseAproxBucket.getEntrance();
 			entrance.getBLeftTime().unlinkRighBoundTime();
+//			if (entrance.getBLeftTime().id==364) {
+//				System.out.println("Es2: "+entrance.getBLeftTime().id+" "+entrance.id+" "+entrance.getBRigthTime());
+//			}
 			int dv;
 			while(entrance!=null){
 				baseAproxBucket.deleteToPassTime(entrance);

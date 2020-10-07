@@ -129,7 +129,6 @@ public class DataHandler {
 	 * @throws IOException
 	 */
 	public void ReadDimacsF() throws NumberFormatException, IOException {
-		System.out.println("holaa");
 		File file2 = null;
 		file2 = new File("./networks/"+acro);
 		BufferedReader bufRdr2 = new BufferedReader(new FileReader(file2));
