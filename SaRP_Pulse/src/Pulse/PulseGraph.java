@@ -113,6 +113,8 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 	static double pulseTimeLimit;
 	
 	static int refit;
+	
+	static int feasPaths;
 
 	/**
 	 * creates a pulse graph
@@ -134,6 +136,7 @@ public class PulseGraph  implements Graph<VertexPulse, EdgePulse> {
 		Infeasibility=0;
 		Dominance=0;
 		refit=1;
+		feasPaths=0;
 
 	}
 

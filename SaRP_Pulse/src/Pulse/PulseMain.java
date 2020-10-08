@@ -109,7 +109,6 @@ public class PulseMain {
 			dataA.ReadDimacsF();
 			dataA.loadData();
 			network = S_createGraph(dataA);
-
 		}
 		//Backward direction: 
 		if(direction == 2) {
@@ -119,10 +118,30 @@ public class PulseMain {
 			network = S_createGraph(dataA);
 		}
 
-		//Initial bounds
+		//Initial bounds		
+		Fitter dataAux = new Fitter(num_nodes,num_arcs,source,target,0,net_file,net_fileD,N_Phases);
+		dataAux.ReadDimacsF();
+		dataAux.loadData();
+		SolveSPExp(dataAux , network);
+		int[] texpMin=new int[dataA.NumNodes];
+		
+		for (int i = 0; i < dataA.NumNodes; i++) {
+			VertexPulse a=network.getVertexByID(i);
+			texpMin[i]=a.getMinTime();
+		}		
+		
+		dataA = new Fitter(num_nodes,num_arcs,source,target,0,net_file,net_fileD,N_Phases);
+		dataA.ReadDimacsF();
+		dataA.loadData();
+		PulseGraph networkA = S_createGraph(dataA);
 
-		SP(dataA,network);
-
+		SP(dataA,networkA);
+		
+		for (int i = 0; i < dataA.NumNodes; i++) {
+			VertexPulse a=network.getVertexByID(i);
+			a.setMinExpTime(texpMin[i]);			
+		}
+		
 		//Time limit tightness
 
 
@@ -167,10 +186,10 @@ public class PulseMain {
 		ContPhaseVar ptRV=new DenseContPhaseVar(tau, A);
 		double [] data0=new double[dataA.NumSample];
 		
-		
 		network.getVertexByID(dataA.Source).pulse(0, ptRV, 1, 0,0, finalPath,data0);
 		
-//		int[] pat= {369, 915, 916, 781, 786, 794, 802, 708, 390, 391, 392, 393, 394, 395, 396, 397, 402, 403, 404, 487, 486, 534, 485, 479, 478, 477, 476, 503, 504, 505, 506, 507, 508, 509, 510, 520, 518, 667, 849, 853, 906, 909, 910, 364};
+//		int[] pat= {369, 915, 916, 781, 786, 794, 802, 708, 390, 391, 392, 393, 394, 395, 396, 397, 402, 403, 404, 487, 486, 534, 485, 479, 478, 477, 476, 503, 504, 505, 506, 507,508, 509, 510, 520, 518, 667, 849, 853, 906, 909, 910, 364};
+//		int[] pat= {369, 915, 916, 781, 786, 794, 802, 708, 712, 715, 600, 599, 601, 670, 675, 674, 403, 404, 487, 486, 534, 485, 479, 478, 477, 476, 503, 504, 505, 506, 507};
 //		int minTime=0;
 //		for (int i=0;i<pat.length; i++) {
 //			int t=pat[i];
@@ -199,7 +218,8 @@ public class PulseMain {
 //		System.out.println("Momentos Fit: "+ptRV1.moment(1)+"\t"+ptRV1.moment(2)+"\t"+ptRV1.moment(3));
 		
 		//Ends the clock
-
+		
+		
 		double finalTime = (System.nanoTime() - iniTime)/1000000000;
 
 
@@ -600,7 +620,30 @@ public class PulseMain {
 		}
 		return Gd;
 	}
+	/**
+	 * This method creates a Stochastic_network
+	 * @param data fitter
+	 * @return the final graph
+	 */
 
+	private static PulseGraph Aux_createGraph(Fitter  data) {
+		int numNodes = data.NumNodes;
+		PulseGraph Gd = new PulseGraph(numNodes);
+		for (int i = 0; i < numNodes; i++) {
+			if(i!=(data.LastNode)){
+				Gd.addVertex(new VertexPulse(i) ); //Primero lo creo, y luego lo meto. El id corresponde al n�mero del nodo
+			}
+		}
+
+		FinalVertexPulse vv = new FinalVertexPulse(data.LastNode);
+		Gd.addFinalVertex(vv);
+
+		for(int i = 0; i <data.NumArcs; i ++){
+			System.out.println("El E{t} es: "+(int) data.TimeRV[i].expectedValue()+"\nel min time es: "+data.MinTime[i]+"\n");
+			Gd.addWeightedEdge(Gd.getVertexByID(data.Arcs[i][0]), Gd.getVertexByID(data.Arcs[i][1]),data.Distance[i],(int) data.TimeRV[i].expectedValue(),data.TimeRV[i], i);
+		}
+		return Gd;
+	}
 	/**
 	 * This method runs a shortest path for cost and times
 	 * @param data
@@ -656,7 +699,18 @@ public class PulseMain {
 		tTime.join();
 //		tExpTime.join();
 	}
-
+	
+	private static void SolveSPExp(Fitter data, PulseGraph network) throws InterruptedException {
+		
+		for(int i=0;i<data.NumArcs;i++) {
+			data.MinTime[i]+=data.TimeRV[i].expectedValue();
+		}
+		
+		
+		PulseGraph networkAux = S_createGraph(data);
+		
+		SP(data,networkAux);		
+	}
 	/**
 	 * This method completes the path using the minimum cost or minimum time path
 	 * @param data

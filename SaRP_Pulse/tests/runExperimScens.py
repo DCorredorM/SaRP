@@ -34,31 +34,36 @@ def runInstancesScenarios(nPhases,nScen,alpha,clearF=True):
 	'''
 	#if clearF: clearResultFiles()
 	
-	folder=os.path.abspath(f'../../data/Networks/{city}')
-	inst=open(f'{folder}/{city}_instances_{tightness}.txt','r')	
+	folder=os.path.abspath(f'../../data/Networks/{city}')	
+	inst=open(f'{folder}/Scenarios/Instances/i.txt')
 	
-	createFolder(name=f'{folder}/Results/Scenarios/PHFit{nPhases}_{tightness}')
-	
+	results=f'../../results/{city}/Scenarios/PHFit{nPhases}_{tightness}'
+	createFolder(name=results)
 	scen=list(range(1,nScen+1))#+['Total']
 	nn=0
+	wb='w'
 	for l in inst:
 		if l[0]!='#':
 			i=l.replace('\n','').split('\t')
+			
+			s,t,tL,tU=int(i[0]),int(i[1]),float(i[2]),float(i[3])
+			T=tL+(tU-tL)*(1-tightness)
+			print(f'{s}\t{t}\t{T}\t{tL}\t{tU}')
 			for k in scen:
-				config=open(f'{folder}/{city}_config.txt','w')
-				print(i)
-				text=f'PHFitFile:Scenarios/PHFit{nPhases}_scen{k}.txt\nDataFile:Scenarios/scen{k}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{float(i[2])}\nStart Node:{i[0]}\nEnd Node:{i[1]}\nNumber of Phases:{nPhases}\nalpha:{alpha}\nTime Limit:{timeLimit}'
+				print(f"Scenario {k}\n")
+				config=open(f'{folder}/{city}_config.txt','w')				
+				text=f'PHFitFile:Scenarios/data/PHFit{nPhases}_scen{k}.txt\nDataFile:Scenarios/data/scen{k}.txt\nNumber of Arcs:2950\nNumber of Nodes:933\nTime Constraint:{T}\nStart Node:{s}\nEnd Node:{t}\nNumber of Phases:{nPhases}\nalpha:{alpha}\nTime Limit:{timeLimit}\nrefit:{refit}'
 				config.write(text)				
 				config.close()
 				d=runExperiment()
-				resultFile=open(f'{folder}/Results/Scenarios/PHFit{nPhases}_{tightness}/scen{k}.txt','a')
-				print(d)
+				resultFile=open(f'{results}/scen{k}.txt',wb)
 				resultFile.write(d+'\n')
+				print(d)
 				resultFile.close()
-
 			nn+=1
 			if nn>=1000:
 				break
+		wb='a'
 
 def clearResultFiles():
 	'''
@@ -85,11 +90,13 @@ if __name__ == '__main__':
 	city='Chicago-Sketch'
 	timeLimit=5000	
 	tightness=0.4
+	refit=1000
+	alpha=0.8
 	########################################################		
 
 	#runInstancesScenarios(nPhases=10,nScen=5,alpha=0.8)
 	#runInstancesScenarios(nPhases=5,nScen=5,alpha=0.8)
 	for i in [0.2,0.6,0.8]:
 		tightness=i
-		runInstancesScenarios(nPhases=3,nScen=5,alpha=0.8)
+		runInstancesScenarios(nPhases=3,nScen=5,alpha=alpha)
 

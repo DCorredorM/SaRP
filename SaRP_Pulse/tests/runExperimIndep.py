@@ -257,9 +257,9 @@ if __name__ == '__main__':
 	timeLimit=5000	
 	tightness=0.8
 	CV=0.8
-	alpha=0.9
+	alpha=0.8
 	n_it=500	#Number of realizations for Montecarlo
-	refit=3
+	refit=1000
 	creates_graphs()
 	########################################################		
 

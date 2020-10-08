@@ -455,6 +455,7 @@ public class Fitter {
 
 
 	public static DenseContPhaseVar fitPath(ArrayList<Integer> pPath)  {
+		double iniTime = System.nanoTime();		
 		double[] tData=null;
 		for (int i = 0; i < pPath.size()-1; i++) {
 			if (tData!=null) {
@@ -476,15 +477,24 @@ public class Fitter {
 		}
 
 		EMHyperErlangFit EMfit = new EMHyperErlangFit(tData);
-		ContPhaseVar pha =  EMfit.fit(N_Phase*PulseGraph.refit);
-		
+		ContPhaseVar pha =  EMfit.fit(N_Phase*4);
+
 		int ii=0;
+		boolean camb=true;
 		while (!jphase.MatrixUtils.checkSubGeneratorMatrix(pha.getMatrix())) {
 			EMfit = new EMHyperErlangFit(tData);
-			pha =  EMfit.fit(N_Phase*PulseGraph.refit+ii);
-			ii++;
+			pha =  EMfit.fit(N_Phase*4+ii);
+			if (ii==5){
+				ii=0;
+				camb=false;
+			}
+			if(camb) {
+				ii--;
+			}else {
+				ii++;
+			}
 		}
-		
+
 		double [] tau=pha.getVectorArray();
 		double[][] A=pha.getMatrixArray();
 		int n = A.length-1;
@@ -502,8 +512,9 @@ public class Fitter {
 			}
 		}
 
-
 		DenseContPhaseVar ph= new DenseContPhaseVar(tau, A);
+		double finalTime = (System.nanoTime() - iniTime)/1000000000;
+		System.out.println("En refitting me demoro: "+finalTime);
 		return ph;
 
 	}

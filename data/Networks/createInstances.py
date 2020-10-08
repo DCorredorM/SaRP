@@ -248,21 +248,5 @@ if __name__ == '__main__':
 	rnd.seed(1)
 	#createRandomInst(n=40,wb='w')
 
-	s,t=370,365
-
-	spT=nx.shortest_path(DG,s,t,'Time')
-	spC=nx.shortest_path(DG,s,t,'Cost')
-	
-	TspT=alphaQuantile(list(zip(spT[:-1],spT[1:])),alpha)
-	TspC=alphaQuantile(list(zip(spC[:-1],spC[1:])),alpha)
-
-	print([i-1 for i in spT])
-	print("Con data: ",eval_path(spT,10888))
-	# p=[369, 915, 916, 781, 786, 794, 798, 804, 803, 807, 583, 587, 396, 397, 402, 403, 404, 487, 486, 534, 485, 479, 478, 477, 476, 503, 504, 505, 506, 507, 508, 666, 668, 850, 852, 859, 860, 909, 910, 364]
-	# p=[i+1 for i in p]
-	# tmax=calcTMax(s=p[0],t=p[-1])
-	# print('Este es el T',tmax)
-	# print('Con data es: ',eval_path(p,10888))
-
 	
 	

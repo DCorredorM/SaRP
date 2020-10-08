@@ -410,6 +410,7 @@ public class VertexPulse {
 	{
 		//System.out.println("Llegue con: "+pCost+" - "+pMean+" - "+path);
 		// if a node is visited for first time, sort the arcs
+		
 		if (this.firstTime) {
 			this.firstTime = false;
 			this.Sort(this.magicIndex); 
@@ -652,14 +653,15 @@ public class VertexPulse {
 
 
 	public void pulse(int pCost, ContPhaseVar ptRV,double pProb, double ptmin,double pMean,  ArrayList<Integer> path,double[] pData) {
-//		System.out.println("Llegue aca: "+id+" - "+pCost+" - "+pMean+" - "+PulseGraph.PrimalBound + " - "+pProb);
+//		System.out.println("Llegue aca: "+id+" - "+pCost+" - "+pMean+" - "+PulseGraph.PrimalBound + " - "+pProb);		
 		// if a node is visited for first time, sort the arcs
 		if (this.firstTime) {
 			this.firstTime = false;
-			this.Sort(this.magicIndex); 
+			this.Sort(this.magicIndex); 			
 			leftDist = null;
 			rigthDist = null;
 			reverseEdges = null;
+			
 		}
 
 		// Label update
@@ -670,7 +672,14 @@ public class VertexPulse {
 
 			// Add the node to the path
 			path.add(id);			
-
+//			System.out.println(path);
+//			System.out.println("####\t"+id);
+//			for (int i = 0; i < magicIndex.size(); i++) {
+//				int e = (Integer) magicIndex.get(i); //Arc index
+//				int a = Fitter.Arcs[e][1];			// Head Node
+//				System.out.println(a+"\t"+PulseGraph.vertexes[a].getMinExpTime()+"\t"+PulseGraph.vertexes[a].getMinDist());				
+//			}
+//			System.out.println("####");
 			// Update the visit indicator
 			PulseGraph.Visited[id]=1;
 
@@ -708,6 +717,7 @@ public class VertexPulse {
 						}else {
 							//System.out.println("Pode por dominancia");
 							PulseGraph.Infeasibility+=1;
+//							System.out.println("Pode por infactibilidad:\t"+newProb);
 						}
 
 					}else {
@@ -735,11 +745,13 @@ public class VertexPulse {
 		for (int i=0;i<n;i++) {
 			trace+=pPH.getMatrix().get(i, i);
 		}
-		if (pPath.size()%PulseGraph.refit==0 || (-1*trace>1000)) {	
+		double fact=0.75;
+//		System.out.println("El path para refit es: "+pPH.getNumPhases()+"\n"+fact*(pPath.size()-1)*Fitter.N_Phase);
+		if ((pPath.size()%PulseGraph.refit==0 || (-1*trace>1000))&& pPH.getNumPhases()>=fact*(pPath.size()-1)*Fitter.N_Phase) {	
 			pPath.add(Fitter.Arcs[arc][1]);
 			ContPhaseVar ph=Fitter.fitPath(pPath);
-			System.out.println("El path para refit es: "+pPath);
-			System.out.println(ph.toString());
+//			System.out.println("El path para refit es: "+pPH.getNumPhases()+"\n"+fact*(pPath.size()-1)*Fitter.N_Phase);
+//			System.out.println(ph.toString());
 			pPath.remove(pPath.size()-1);
 			return ph; 	
 		}else {
@@ -968,7 +980,7 @@ public class VertexPulse {
 			return getMinDist();
 		}else {
 //			System.out.println("Entre aca, minTime es "+getMinTime());
-//			return getMinTime();
+//			return getMinExpTime();
 			return getMinDist();
 		}
 	}
