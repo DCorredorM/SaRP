@@ -41,7 +41,7 @@ def runInstancesScenarios(nPhases,nScen,alpha,clearF=True):
 	createFolder(name=results)
 	scen=list(range(1,nScen+1))#+['Total']
 	nn=0
-	wb='w'
+	wb='a'
 	for l in inst:
 		if l[0]!='#':
 			i=l.replace('\n','').split('\t')
@@ -88,7 +88,7 @@ if __name__ == '__main__':
 	Setting of some global parameters
 	'''
 	city='Chicago-Sketch'
-	timeLimit=5000	
+	timeLimit=2000	
 	tightness=0.4
 	refit=1000
 	alpha=0.8
@@ -96,7 +96,7 @@ if __name__ == '__main__':
 
 	#runInstancesScenarios(nPhases=10,nScen=5,alpha=0.8)
 	#runInstancesScenarios(nPhases=5,nScen=5,alpha=0.8)
-	for i in [0.2,0.6,0.8]:
+	for i in [0.4,0.8][::-1]:
 		tightness=i
 		runInstancesScenarios(nPhases=3,nScen=5,alpha=alpha)
 
