@@ -2,10 +2,10 @@ PHFitFile:Independent/CV0.8/PHFit5_cv0.8.txt
 DataFile:Independent/CV0.8/data_cv0.8.txt
 Number of Arcs:2950
 Number of Nodes:933
-Time Constraint:10888
-Start Node:370
-End Node:365
+Time Constraint:8000
+Start Node:33
+End Node:781
 Number of Phases:5
 alpha:0.8
 Time Limit:5000
-refit:3
+refit:1000
