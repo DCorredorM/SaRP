@@ -242,7 +242,7 @@ if __name__ == '__main__':
 	creates_graphs()	
 	alpha=0.8
 	CV=0.8
-	experim=SCEN #If creating instances for Independen experiments or Scenario experiments
+	experim=INDEP #If creating instances for Independen experiments or Scenario experiments
 	########################################################
 	
 	rnd.seed(1)
