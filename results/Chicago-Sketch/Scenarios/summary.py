@@ -72,8 +72,10 @@ def analyze(nPhases):
 		for sc in scens:
 			if not laux[sc]:
 				l=files[sc].readline().replace('\n','').split('\t')
+				# print(l)
 			else:
 				l=laux[sc]
+
 
 			nums=list(map(float,l[:-1]))						
 			if l!=['']:
@@ -82,6 +84,7 @@ def analyze(nPhases):
 					cost.cell(r,col).value=nums[3]
 					rel.cell(r,col).value=nums[5]
 					laux[sc]=None
+					
 				else:
 					laux[sc]=l
 			col+=1
@@ -118,5 +121,5 @@ if __name__ == '__main__':
 	nPhases=3
 	tightness=0.2
 	########################################################
-	for tightness in [0.2,0.4,0.6,0.8]:
+	for tightness in [0.2,0.8]:
 		analyze(nPhases)
