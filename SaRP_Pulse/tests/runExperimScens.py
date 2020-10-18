@@ -88,7 +88,7 @@ if __name__ == '__main__':
 	Setting of some global parameters
 	'''
 	city='Chicago-Sketch'
-	timeLimit=2000	
+	timeLimit=1000	
 	tightness=0.4
 	refit=1000
 	alpha=0.8
@@ -96,7 +96,7 @@ if __name__ == '__main__':
 
 	#runInstancesScenarios(nPhases=10,nScen=5,alpha=0.8)
 	#runInstancesScenarios(nPhases=5,nScen=5,alpha=0.8)
-	for i in [0.4,0.6][::-1]:
+	for i in [0.2,0.4]:
 		tightness=i
 		runInstancesScenarios(nPhases=3,nScen=5,alpha=alpha)
 
