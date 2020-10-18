@@ -178,7 +178,7 @@ def readRealizations(arcs):
 		data(np.array: sum of the arc travel times
 	'''
 	if experim==SCEN:
-		f=open(f'{city}/{experim}/scenTotal.txt')
+		f=open(f'{city}/{experim}/data/scenTotal.txt')
 	else:
 		f=open(f'{city}/{experim}/CV{CV}/data_cv{CV}.txt')
 
