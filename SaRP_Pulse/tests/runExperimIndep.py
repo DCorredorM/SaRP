@@ -210,7 +210,7 @@ def runInstancesIndependent(nPhases,clearF=True):
 				print(f'PH{np}\t{d}')
 				resultFile.close()
 			
-			s,t,T=int(i[0])+1,int(i[1])+1,float(i[2])
+			s,t,T=int(i[0]),int(i[1]),float(i[2])
 			#Solve CSP
 			t_pulse,pulse_cost,pulse_sol_time,prob,bound, infeas,dom,pulse_path=solveCSP(s,t,T)
 			d=f'{s}\t{t}\t{t_pulse}\t{pulse_cost}\t{pulse_sol_time}\t{prob}\t{prob}\t{bound}\t{infeas}\t{dom}\t{pulse_path}\n'
@@ -219,11 +219,11 @@ def runInstancesIndependent(nPhases,clearF=True):
 			resultFile.write(d)
 			
 			#Solve SaRP with MC
-			# t_pulse,pulse_cost,pulse_sol_time,probAnte,probPost,bound, infeas,dom,pulse_path=solveSaRPMC(s,t,T)
-			# d=f'{s}\t{t}\t{t_pulse}\t{pulse_cost}\t{pulse_sol_time}\t{probAnte}\t{probPost}\t{bound}\t{infeas}\t{dom}\t{pulse_path}\n'
-			# resultFile=open(f'{results}/MC_Pulse.txt',wb)
-			# print(f'PulseMC\t{d}')
-			# resultFile.write(d)
+			t_pulse,pulse_cost,pulse_sol_time,probAnte,probPost,bound, infeas,dom,pulse_path=solveSaRPMC(s,t,T)
+			d=f'{s}\t{t}\t{t_pulse}\t{pulse_cost}\t{pulse_sol_time}\t{probAnte}\t{probPost}\t{bound}\t{infeas}\t{dom}\t{pulse_path}\n'
+			resultFile=open(f'{results}/MC_Pulse.txt',wb)
+			print(f'PulseMC\t{d}')
+			resultFile.write(d)
 			wb='a'
 
 
